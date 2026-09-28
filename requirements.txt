@@ -1,0 +1,11 @@
+pandas>=2.0.3
+google-cloud-bigquery>=3.10.0
+google-api-python-client>=2.90.0
+google-auth>=2.21.0
+pyarrow>=10.0.0
+
+gspread
+gspread-dataframe
+pandas-gbq
+db-dtypes
+openpyxl

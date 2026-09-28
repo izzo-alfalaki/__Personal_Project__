@@ -1,0 +1,50 @@
+# ==========================================
+# Virtual Environments & Editors
+# ==========================================
+.venv/
+venv/
+ENV/
+.vscode/
+.idea/
+
+# ==========================================
+# Python Bytecode & Cache
+# ==========================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ==========================================
+# Secrets & Private Configurations
+# ==========================================
+# Secret Python config files (anywhere in repo)
+**/VALUES_SHOPEE.py
+
+# Secret JSON files matching your naming pattern
+**/SOURCES_*.json
+**/service_acc*.json
+
+# Safety catch for root/config raw secret files
+config/izzo.json
+config/git.json
+config/lark.json
+
+# ==========================================
+# Logs & Scheduler Outputs
+# ==========================================
+*.log
+# Windows_Scheduler/logs/
+*.csv
+
+# ==========================================
+# Personal Notes & Documentation Drafts
+# ==========================================
+to-do-list.txt
+#repodesign.txt
+
+# ==========================================
+# OS Garbage
+# ==========================================
+.DS_Store
+Thumbs.db
