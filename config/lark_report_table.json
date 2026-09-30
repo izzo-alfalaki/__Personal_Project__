@@ -1,0 +1,19 @@
+{
+    "BASE_TOKEN" : "RhPKw95eqiMP8Ikzj7CjxNcEpSd",
+    "REPORTS" :  { 
+        "GIT_REPORT" : {
+            "TABLE_ID" : "tblp1eQpxMdnjpRQ",
+            "RECORD_ID" : "vewkew3VWe"
+        }
+        ,
+        "TEST_REPORT" : {
+            "TABLE_ID" : "tblQle7H06nxy77S",
+            "RECORD_ID" : "vewHUG7b6w"            
+        }
+        ,
+        "IZZO_TABLE" : {
+            "TABLE_ID" : "tblVnEnNpMXM8XG3",
+            "RECORD_ID": "DWpDa9yKLdE9K2rPQ6rj8e8Tp4g"
+        }
+     } 
+}

@@ -4,7 +4,7 @@ def main():
     execute = GitPipelines()
     #execute.main()
 
-    print(execute.call_procedure())
+    print(execute.send_report_to_lark())
 
 if __name__ == '__main__':
     main()

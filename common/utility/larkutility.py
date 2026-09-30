@@ -1,16 +1,16 @@
 import math
 import time
 import requests
-from common.connection.larkclient import LarkClient
 
 class LarkRequests:
-    def __init__(self, client : dict):
+    def __init__(self, client : dict, base_token):
         larkclient = client
         self.access_token = larkclient.get( 'token' )
         self.header = larkclient.get('header')
-
+        self.base_token = base_token
+    
     def lark_get_table( self, table_id):
-        path = f'https://open.larksuite.com/open-apis/bitable/v1/apps/{self.access_token}/tables/{table_id}/records'
+        path = f'https://open.larksuite.com/open-apis/bitable/v1/apps/{self.base_token}/tables/{table_id}/records'
 
         all_items = []
         page_token = None
@@ -37,7 +37,7 @@ class LarkRequests:
         return all_items
 
     def clear_table( self, table_id):
-        path = f'https://open.larksuite.com/open-apis/bitable/v1/apps/{self.access_token}/tables/{table_id}'
+        path = f'https://open.larksuite.com/open-apis/bitable/v1/apps/{self.base_token}/tables/{table_id}'
 
         all_record_ids = []
         page_token = None
@@ -91,7 +91,7 @@ class LarkRequests:
         print('Table cleared successfully')
  
     def df_to_lark(self, df, table_id, batch_size=100, max_retries=3):
-        url = f'https://open.larksuite.com/open-apis/bitable/v1/apps/{self.access_token}/tables/{table_id}/records/batch_create'
+        url = f'https://open.larksuite.com/open-apis/bitable/v1/apps/{self.base_token}/tables/{table_id}/records/batch_create'
 
         records = [ {'fields': {col: row[col] for col in df.columns}}
                      for row in df.to_dict(orient='records') ]

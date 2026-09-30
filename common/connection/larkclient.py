@@ -1,16 +1,17 @@
 import requests
+import lark_oapi as lark
 from config.larkconfig import APP_ID, APP_SECRET
 
 class LarkClient:
     def __init__(self):
-        self.app_id = APP_ID
-        self.app_secret = APP_SECRET
+        self.APP_ID = APP_ID
+        self.APP_SECRET = APP_SECRET
 
     def lark_access_token( self ):
         url = 'https://open.larksuite.com/open-apis/auth/v3/tenant_access_token/internal'
         payload = {
-            'app_id': self.app_id,
-            'app_secret': self.app_secret
+            'app_id': self.APP_ID,
+            'app_secret': self.APP_SECRET
             }
         
         res = requests.post(url, json=payload)
@@ -33,3 +34,6 @@ class LarkClient:
 
     def declare( self ):
         return dict( zip( [ 'token', 'header' ], [ self.lark_access_token(), self.header() ] ) )
+
+    def SDKclient( self ):
+        return lark.Client.builder().app_id(self.APP_ID).app_secret(self.APP_SECRET).log_level(lark.LogLevel.DEBUG).build()

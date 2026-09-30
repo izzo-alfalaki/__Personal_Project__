@@ -1,6 +1,9 @@
+""" 
+This pipeliens utilize the request methid of Lark, in other .py, we will demonstrate Lark SDK
+"""
+
 import numpy as np
 import pandas as pd
-#pd.set_option('display.max_columns', None)
 
 from common.connection.gcpclient import GcpClient
 from common.connection.gitclient import GitClient
@@ -10,13 +13,17 @@ from common.utility.gitutility import GitRequest
 from common.utility.larkutility import LarkRequests
 from common.utility.bigqueryutility import BigQuery
 
+from config.lark_report_table import BASE_TOKEN as APP_TOKEN, GIT_REPORT
+
 class GitPipelines:
     def __init__(self):
         self.Git = GitRequest(GitClient().declare())
-        self.Lark = LarkRequests( LarkClient().declare())
+        self.Lark = LarkRequests( LarkClient().declare(), APP_TOKEN)
     
         gcp = GcpClient()
         self.BigQuery = BigQuery( gcp.bq_client(), gcp.get_credits(), gcp.project_id )
+
+        self.table_id = GIT_REPORT.get('TABLE_ID')
 
     def get_workflow_timing(self):
         data, id  = self.Git.get_runner_list()
@@ -75,14 +82,21 @@ class GitPipelines:
     
     def send_report_to_lark(self):
         df = self.call_procedure()
-        LARK_GIT_ID = 'example_ID'
-        self.Lark.df_to_lark(  df, LARK_GIT_ID  )
+        df.columns = df.columns.str.strip().str.title().str.replace('_', ' ')
 
-    def main(self, update_procedure = False):
+        date_col = df.select_dtypes(['datetime64', 'datetime64[ns, UTC]'])
+
+        for d in date_col:
+            df[d] = df[d].apply( lambda x: int(x.timestamp() * 1000) if pd.notna(x) else None )
+ 
+        self.Lark.df_to_lark(  df, self.table_id  )
+
+    def main(self, update_procedure = False, push_report = False):
         df = self.get_workflow_timing()
         self.load_to_bq( df )
 
         if update_procedure:
             self.push_procedure()
 
-        self.call_procedure()
+        if push_report:
+            self.send_report_to_lark()
