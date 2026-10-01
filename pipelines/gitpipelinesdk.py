@@ -13,12 +13,12 @@ from common.utility.bigqueryutility import BigQuery
 
 from pipelines.gitpipeline import GitPipelines
 
-from config.lark_report_table import BASE_TOKEN as APP_TOKEN, GIT_REPORT
+from config.lark_report_table import BASE_TOKEN as APP_TOKEN, TEST_REPORT
 
 class GitSDK:
     def __init__(self):
         self.Git = GitRequest(GitClient().declare())
-        self.Lark = LarkSDK( LarkClient, APP_TOKEN, GIT_REPORT)
+        self.Lark = LarkSDK( LarkClient, APP_TOKEN, TEST_REPORT)
     
         gcp = GcpClient()
         self.BigQuery = BigQuery( gcp.bq_client(), gcp.get_credits(), gcp.project_id )

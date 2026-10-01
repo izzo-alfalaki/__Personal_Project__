@@ -112,6 +112,37 @@ class LarkSDK:
 
         return x
 
+    def SearchRecord( self ):
+        page_token = None
+        all_records = []
+
+        while True:
+            body = SearchAppTableRecordRequestBody.builder().page_size(500)
+            
+            if page_token:
+                body.page_token(page_token)
+            
+            request: SearchAppTableRecordRequest = SearchAppTableRecordRequest.builder() \
+            .app_token(self.base_token) \
+            .table_id(self.table_id) \
+            .request_body(body.build()) \
+            .build()
+
+            response: SearchAppTableRecordResponse = self.client.bitable.v1.app_table_record.search(request)
+            x = self.log_return(response)
+
+            if not response.success():
+                return x
+
+            all_records.extend( response.data.items )
+
+            if not response.data.has_more:
+                break
+
+            page_token = response.data.page_token
+
+        return all_records.extend( x['items'])
+
     def UpdateRecordData( self, df ):
         """
         Actually ignore this guy ah, update is not really needed for now but maybe some occasion we do ah
