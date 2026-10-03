@@ -40,6 +40,7 @@ class LarkSDK:
         
         json_str = lark.JSON.marshal(response.data)
         data = json.loads( json_str )
+        
         return data
                     
     def ListTables(self):
@@ -117,7 +118,7 @@ class LarkSDK:
         all_records = []
 
         while True:
-            body = SearchAppTableRecordRequestBody.builder().page_size(500)
+            body = SearchAppTableRecordRequestBody.builder()
             
             if page_token:
                 body.page_token(page_token)
@@ -125,23 +126,24 @@ class LarkSDK:
             request: SearchAppTableRecordRequest = SearchAppTableRecordRequest.builder() \
             .app_token(self.base_token) \
             .table_id(self.table_id) \
+            .page_size(500) \
             .request_body(body.build()) \
             .build()
 
             response: SearchAppTableRecordResponse = self.client.bitable.v1.app_table_record.search(request)
             x = self.log_return(response)
 
-            if not response.success():
-                return x
+            if x is None:
+                return None
 
-            all_records.extend( response.data.items )
+            all_records.extend( x['items'])
 
-            if not response.data.has_more:
+            if not x['has_more']:
                 break
 
-            page_token = response.data.page_token
+            page_token = x['page_token']
 
-        return all_records.extend( x['items'])
+        return all_records
 
     def UpdateRecordData( self, df ):
         """
