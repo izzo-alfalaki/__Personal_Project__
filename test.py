@@ -1,37 +1,21 @@
-from common.utility.larkutillitysdk import LarkSDK
-from common.connection.larkclient import LarkClient
-from config.lark_report_table import IZZO_TABLE, BASE_TOKEN as APP_TOKEN
+from pipelines.gitpipelinesdk import GitSDK
 
-req = LarkSDK( LarkClient(), APP_TOKEN, IZZO_TABLE )
+GitSDK().main(get=True)
+"""
+QUERY(SS!A2:BE, "select A,B,C,D,F,G,H,K,L,I,J,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null");
+QUERY(KTL!A2:BE, "select A,B,C,D,F,G,H,K,L,I,J,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null");
 
-import pandas as pd
-df = pd.DataFrame( { 'name' : [ 'izzat', 'rosnazifa', 'ISHAK' ], 'number' : [ 276, 37, 276 ] } )
+ 
+QUERY(BBSYG!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null"); 
+QUERY(MMKJ!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null"); 
+QUERY(KBYI!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null"); 
+QUERY(JF!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null"); 
+QUERY(PKR!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null"); 
+QUERY(SK!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null"); 
+QUERY(MM.FD!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null"); 
+QUERY(BGS!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null");
+QUERY(PSW!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null");
+QUERY(KKMM!A2:BE, "select A,B,C,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,AB,AC,AD,AE,AF,AG,AH,AI,AJ,AK,AL,AM,AN,AO,AP,AQ,AR,AS,AT,AU,AV,AW,AX,AY,AZ,BA,BB,BC,BD,BE where A is not null")
 
-res = req.SearchRecord()
 
-print( res )
-
-df = pd.json_normalize( res )
-
-#df.to_csv( 'izzat.csv', index=False )
-
-for c in df.columns:
-    df[c] = df[c].apply( lambda x: x[0]['text'] if (isinstance( x, list ) and x[0]['text']) else x )
-
-df.columns = df.columns.str.replace( 'fields.', '' ).str.replace('.',  '_')
-
-print( df )
-
-#    def log_return( self, response ):
-#        if not response.success():
-#            lark.logger.error(
-#                f"client.failed, code: {response.code}, msg: {response.msg}, log_id: {response.get_log_id()}, message: {response.error.get('message') if response.error else None}" 
-#                #- resp: \n{json.dumps(json_res, indent=4, ensure_ascii=False)}
-#            )
-#            return None
-#        
-#        json_str = lark.JSON.marshal(response.data)
-#        print( json_str )
-#        data = json.loads( json_str )
-#        print( data )
-#        return data
+"""
