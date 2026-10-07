@@ -13,23 +13,6 @@ class LarkSDK:
 
         self.base_token = app_token
 
-    def df_to_records(self, df: pd.DataFrame):
-        date_col = [ c for c in df.select_dtypes( include=[ 'datetime', 'datetime64', 'datetime64[ms, UTC]' ]).columns ]
-        
-        for c in date_col:
-            df[c] = (df[c].astype("int64") // 10**6)
-
-        load = df.to_dict(orient="records")
-                
-        return load
-
-    def load_record( self, load ):
-        load_records = [
-                    AppTableRecord.builder().fields(record).build()
-                    for record in load
-                ]
-        return load_records
-
     def log_return( self, response ):
         if not response.success():
             lark.logger.error(
@@ -74,6 +57,29 @@ class LarkSDK:
         
         return x
 
+    # ----------------------------------------------------------------- #
+    # ----------------------------------------------------------------- #
+
+    def df_to_records(self, df: pd.DataFrame):
+        date_col = [ c for c in df.select_dtypes( include=[ 'datetime', 'datetime64', 'datetime64[ms, UTC]' ]).columns ]
+        
+        for c in date_col:
+            df[c] = (df[c].astype("int64") // 10**6)
+
+        load = df.to_dict(orient="records")
+                
+        return load
+
+    def load_record( self, df ):
+        load_records = [
+                    AppTableRecord.builder().fields(record).build()
+                    for record in self.df_to_records( df )
+                ]
+        return load_records    
+    
+    # ----------------------------------------------------------------- #
+    # ----------------------------------------------------------------- #
+    
     def CreateRecords( self, df ):
         """
         schema:
@@ -98,13 +104,11 @@ class LarkSDK:
             "user":[{"id":"ou_2910013f1e6456f16a0ce75ede950a0a"},{"id":"ou_e04138c9633dd0d2ea166d79f548ab5d"}]
         }
         """
-        load = self.df_to_records( df )
-
         request: BatchCreateAppTableRecordRequest = BatchCreateAppTableRecordRequest.builder() \
             .app_token(self.base_token) \
             .table_id(self.table_id) \
             .request_body(BatchCreateAppTableRecordRequestBody.builder()
-                .records(self.load_record(load))
+                .records(self.load_record(df))
                 .build()) \
             .build()
 
@@ -112,7 +116,10 @@ class LarkSDK:
         x = self.log_return( response )
 
         return x
-
+    
+    # ----------------------------------------------------------------- #
+    # ----------------------------------------------------------------- #
+    
     def SearchRecord( self ):
         page_token = None
         all_records = []
@@ -143,9 +150,12 @@ class LarkSDK:
 
             page_token = x['page_token']
 
-        return all_records
-
-    def UpdateRecordData( self, df ):
+        return all_records    
+    
+    # ----------------------------------------------------------------- #
+    # ----------------------------------------------------------------- #
+    
+    def UpdateRecordData( self, df, record_id ):
         """
         Actually ignore this guy ah, update is not really needed for now but maybe some occasion we do ah
         """
@@ -181,14 +191,12 @@ class LarkSDK:
                              ).build()) \
                 .build()
         """
-        laod = self.df_to_records( df )
-
         request: UpdateAppTableRecordRequest = UpdateAppTableRecordRequest.builder() \
             .app_token(self.base_token) \
             .table_id(self.table_id) \
-            .record_id( self.record_id ) \
+            .record_id( record_id ) \
             .request_body(AppTableRecord.builder()
-                .fields( self.load_record(laod) )
+                .fields( self.load_record( df ) )
                 .build()) \
             .build()
 

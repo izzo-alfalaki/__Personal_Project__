@@ -14,6 +14,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+framework_copy.py
 
 # ==========================================
 # Secrets & Private Configurations
@@ -34,7 +35,6 @@ config/lark.json
 # Logs & Scheduler Outputs
 # ==========================================
 *.log
-# Windows_Scheduler/logs/
 *.csv
 
 # ==========================================

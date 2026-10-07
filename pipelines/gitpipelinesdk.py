@@ -87,7 +87,24 @@ class GitSDK:
     def send_report_to_bigquery(self, df ):
         self.BigQuery.df_to_bq( df, 'Lark', 'Table_Izzo', new=False )
 
-    def main(self, send = False, get = False):
+    def update_report_in_lark( self ):
+        # get record from bq
+        query = 'select * from Lark_table.lark; '
+
+        df = self.BigQuery.query_to_dataframe( query )
+
+        record_id = df['record_id'].tolist()
+
+        # convert record to field format / payload
+        df_edit = df.copy()
+
+        ## -- example stimulation
+        df_edit['given_name'] = df_edit['given_name'].str.upper()  
+
+        for id in record_id:
+            self.Lark.UpdateRecordData( df = df_edit, record_id = id )
+
+    def main(self, send = False, get = False, update = False):
         if send:
             self.recall_workflow()
             self.send_report_to_lark()
@@ -95,4 +112,9 @@ class GitSDK:
         if get:
             df = self.get_report_from_lark()
             self.send_report_to_bigquery( df )
-        
+
+        if update:
+            self.update_report_in_lark()
+
+
+    

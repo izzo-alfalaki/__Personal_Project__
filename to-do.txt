@@ -1,3 +1,4 @@
-1. test search record, 
-2. send search response , parse and to_bigquery
-3. recall from bq of searchrecord table, if needed, we can use in update record since update rexord currently log : record not found
+1. test search record, ✅
+2. send search response , parse and to_bigquery ✅
+3. recall from bq of searchrecord table,
+    -- if needed, we can use in update record since update rexord currently log : record not found 
