@@ -1,3 +1,18 @@
+"""
+his is integration layer:
+Integrating between Lark to platform of choices + using sdk.
+
+this guy feeds on similar client LarkClient, but we call differently, client = LarkClient().SDKclient()
+majorly we use bitable, becuase we think of most scenario:
+( 1 ) read from lark ; since lark is CRM and probally 
+      customer sercvice / sales / manager / hr key-in data here
+    ( 2 ) translate response to df
+        ( 3 ) send the df to database , desired database
+            ( 4 ) join to table extracted by other API ( maybe )
+         
+main reference:
+  https://open.larksuite.com/document/server-docs/docs/bitable-v1/bitable-overview  
+"""
 import json
 import pandas as pd
 import lark_oapi as lark
@@ -5,8 +20,8 @@ from lark_oapi.api.bitable.v1 import *
 
 class LarkSDK:
     def __init__(self, client : classmethod , app_token, report : dict ):
-        self.token = client.lark_access_token()
-        self.client = client.SDKclient()
+        self.token = client().lark_access_token()
+        self.client = client().SDKclient()
 
         self.table_id = report.get( 'TABLE_ID' )
         self.record_id = report.get( 'RECORD_ID' )
@@ -14,6 +29,9 @@ class LarkSDK:
         self.base_token = app_token
 
     def log_return( self, response ):
+        """
+        this log, we want to make sure all udf can handle error similarly, 
+        """
         if not response.success():
             lark.logger.error(
                 f"client.failed, code: {response.code}, msg: {response.msg}, log_id: {response.get_log_id()}, message: {response.error.get('message') if response.error else None}" 
@@ -27,19 +45,35 @@ class LarkSDK:
         return data
                     
     def ListTables(self):
-        request: ListAppTableRequest = ListAppTableRequest.builder() \
-            .app_token(self.base_token) \
-            .page_token(self.table_id) \
-            .page_size(10) \
-            .build()
+        """
+        before any-else, we need to list available tables, now 
+        """
+        page_token = None
+        all_records = []
+        
+        while True:
+            builder = ListAppTableRequest.builder() \
+                        .app_token(self.base_token) \
+                        .page_size(10)
 
-        response: ListAppTableResponse = self.client.bitable.v1.app_table.list(request)
-        x = self.log_return( response)
+            if page_token:
+                builder.page_token( page_token )
 
-        if x is None:
-            raise ValueError( 'None Type Response' )
+            request: ListAppTableRequest = builder.build()
+            response: ListAppTableResponse = self.client.bitable.v1.app_table.list(request)
+            x = self.log_return( response)
 
-        return x
+            if x is None:
+                break
+            
+            all_records.extend( x.get('items'))            
+
+            if not x.get('has_more'):
+                break
+            
+            page_token = x.get('page_token')
+
+        return all_records
     
     def CreateBatchTable( self, name ):
         request: BatchCreateAppTableRequest = BatchCreateAppTableRequest.builder() \
@@ -66,8 +100,7 @@ class LarkSDK:
         for c in date_col:
             df[c] = (df[c].astype("int64") // 10**6)
 
-        load = df.to_dict(orient="records")
-                
+        load = df.to_dict(orient="records")        
         return load
 
     def load_record( self, df ):
@@ -76,11 +109,11 @@ class LarkSDK:
                     for record in self.df_to_records( df )
                 ]
         return load_records    
-    
+
     # ----------------------------------------------------------------- #
     # ----------------------------------------------------------------- #
     
-    def CreateRecords( self, df ):
+    def CreateRecords( self, df, custom_table_id = None ):
         """
         schema:
         {
@@ -106,7 +139,7 @@ class LarkSDK:
         """
         request: BatchCreateAppTableRecordRequest = BatchCreateAppTableRecordRequest.builder() \
             .app_token(self.base_token) \
-            .table_id(self.table_id) \
+            .table_id(self.table_id if custom_table_id is None else custom_table_id) \
             .request_body(BatchCreateAppTableRecordRequestBody.builder()
                 .records(self.load_record(df))
                 .build()) \
@@ -191,12 +224,14 @@ class LarkSDK:
                              ).build()) \
                 .build()
         """
+        load = self.df_to_records( df )
+        print( load )
         request: UpdateAppTableRecordRequest = UpdateAppTableRecordRequest.builder() \
             .app_token(self.base_token) \
             .table_id(self.table_id) \
             .record_id( record_id ) \
             .request_body(AppTableRecord.builder()
-                .fields( self.load_record( df ) )
+                .fields(  load  )
                 .build()) \
             .build()
 

@@ -1,15 +1,56 @@
+"""
+BigQuery utility is class, defined for use on detailed cases, namely uplaoding dataframe to bq,
+or getting bq tables instead, or other maintainance such as procedure store / proceduire trigger
+
+why its class instead of function, becuase we expect that BigQuery will use one client and same client, so 
+
+instead of:
+
+  df = fetch_data_from_api()
+  client = bq_client()
+
+  send_query( client, 'call stored_procedure();' ) 
+  df = query_to_dataframe( client, 'select from recently_triggered_table;' )
+   **notice how we call client twice**
+
+we can do  :
+
+  client = BigQuery( bq_client() )
+
+  client.sendquery( 'query' )
+  client.to_dataframe( 'query' )
+
+minimalist within syntax
+"""
+
 import os
 import pandas_gbq
 import pandas as pd
 from pathlib import Path
 
 class BigQuery:
+    """
+    client build and connection was passed to client layers, this layers fully focused on using 
+    bq_client libary. we include fexiliblity for clients but not here, since we assume multi-client
+    somehow will be assigned with same task. such as reading bq table, or convert bq table to df
+    or upload table to df 
+    """
     def __init__(self, client, credits, project_id):
         self.client = client
         self.credits = credits
         self.project_id = project_id
-    
+
+    def push_query(self, query :str ) -> None:
+        job = self.client.query( query )
+        job.result()
+
+        if job.errors:
+            print( job.errors )
+        
     def std_cols(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        make table columns standard for bq consumption
+        """
         if df.empty:
             return pd.DataFrame()
 
@@ -28,6 +69,17 @@ class BigQuery:
             )
 
     def df_to_bq( self, df , dataset, table, new= False ):
+        """
+        to_bq assigned for upload table, but df_to_bq, decide how to handle logic, 
+        if new then append if not new then replace, and fallback, 
+
+        if one day workflow run and api response suffer schema chaneges, so instead of fail 
+        and raiseValue(), we can create a fail_appened_table. so we dont need to re-pull the response with 
+        new code construct, 
+
+        we make room for adjustment while having data alreadt arrived in database, we can use sql stimulation
+        to clean data and union all, while during that, we can handle python orchestrartion to re-parse df.   
+        """
         df = self.std_cols(df)
         destination = f'{dataset}.{table}'
 
@@ -60,6 +112,10 @@ class BigQuery:
         
         WHERE 
             routine_name = 'your_procedure_name';
+        """
+        """
+        get procedure from sql/ whole reading procedure, 
+        we can pass it to push query, if we happen to update procedure
         """
         if not file_class:
             folder = Path('sql')
@@ -99,7 +155,12 @@ class BigQuery:
                 procedure.append( straccess )
             return procedure
 
-    def query_to_dataframe( self, query ):
+    def query_to_dataframe( self, query : str|list[str] ):
+        """
+        this function is to convert a query result(s) to dataframe, if  query were pished as list, 
+        then we can collect all the results without concating them, meanwhlle, for one sql string, 
+        will just return the pd.Dataframe
+        """
         if isinstance( query, list ):
             alldata = {}
             for q, i in zip( query, range(1, len(query), 1 ) ):

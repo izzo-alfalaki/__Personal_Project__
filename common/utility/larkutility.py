@@ -1,3 +1,28 @@
+"""
+This is integration layer:
+Integrating between Lark to platform of choices.
+LarkRrequests expect client from LarkClient, unlike Git, Lark bot was created on 
+personal account, then any organization that want the automation implement, can 
+simply add / share their base to the app, upon connected or granted access, we can then 
+start working on any base. 
+
+LarkRequest feeds on it client, where we stimulate the client at orchestration layer, and
+base token as well. for example:
+
+====================================
+run = LarkRequest( LarkClient(), base_token = base_A)
+
+* stimulate base A *
+* then we want to change base *
+
+run.base_token = base_B
+
+* continue stimulation *
+====================================
+this class use http method, in other class, we will demonstrate official lark sdk
+main reference:
+  https://open.larksuite.com/document/server-docs/docs/bitable-v1/bitable-overview
+"""
 import math
 import time
 import requests
@@ -10,6 +35,10 @@ class LarkRequests:
         self.base_token = base_token
     
     def lark_get_table( self, table_id):
+        """
+        this func use to read-table, 
+        essential for constructing from all the way read table to push table to database
+        """
         path = f'https://open.larksuite.com/open-apis/bitable/v1/apps/{self.base_token}/tables/{table_id}/records'
 
         all_items = []
@@ -37,6 +66,10 @@ class LarkRequests:
         return all_items
 
     def clear_table( self, table_id):
+        """
+        if we are assigned to update a report in Lark, we may need this,
+          clear old table then paste new table
+        """
         path = f'https://open.larksuite.com/open-apis/bitable/v1/apps/{self.base_token}/tables/{table_id}'
 
         all_record_ids = []
@@ -91,6 +124,16 @@ class LarkRequests:
         print('Table cleared successfully')
  
     def df_to_lark(self, df, table_id, batch_size=100, max_retries=3):
+        """
+        in orchestration layers, we can use like this
+        df = client.query().to_dataframe()
+        
+        delete_lark_table( table_need_to_update_id )
+
+        # then send the updated model
+        df_to_lark( df, table_need_to_update_id )
+        # almost like updating a data underlying dashboard
+        """
         url = f'https://open.larksuite.com/open-apis/bitable/v1/apps/{self.base_token}/tables/{table_id}/records/batch_create'
 
         records = [ {'fields': {col: row[col] for col in df.columns}}
