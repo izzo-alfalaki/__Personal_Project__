@@ -26,11 +26,15 @@ class GitPipelines:
         self.table_id = GIT_REPORT.get('TABLE_ID')
 
     def get_workflow_timing(self):
-        data, id  = self.Git.get_runner_list()
-        dx = pd.json_normalize( data )
+        res  = self.Git.get_runner_list()
+
+        df = pd.json_normalize( res[0].get('workflow_runs') )    
+        id_list = df['id'].tolist()
+        
+        # dx = pd.json_normalize( data )
 
         data = []
-        for x in id:
+        for x in id_list:
             res = self.Git.get_run_timing( x )
             df = pd.json_normalize( res,
                                     record_path=['billable', 'UBUNTU', 'job_runs'],
