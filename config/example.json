@@ -1,0 +1,31 @@
+{ 
+  "base_token_A" : {
+        "token" : "***",
+        "all_table" : {
+                        "table_a" : "***", 
+                        "table_b" : "***",
+                        "table_c" : "***"
+                    }
+                    ,
+        "all_view" : {
+                        "view_a" : "***", 
+                        "view_b" : "***",
+                        "view_c" : "***"
+                    }
+    },
+
+  "base_token_B" : {
+        "token" : "***",
+        "all_table" : {
+                        "table_a" : "***", 
+                        "table_b" : "***",
+                        "table_c" : "***"
+                    }
+                    ,
+        "all_view" : {
+                        "view_a" : "***", 
+                        "view_b" : "***",
+                        "view_c" : "***"
+                    }
+    }
+}

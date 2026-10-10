@@ -1,0 +1,19 @@
+{
+    "BASE_TOKEN" : "***",
+    "REPORTS" :  { 
+        "GIT_REPORT" : {
+            "TABLE_ID" : "***",
+            "VIEW_ID" : "***"
+        }
+        ,
+        "TEST_REPORT" : {
+            "TABLE_ID" : "***",
+            "VIEW_ID" : "***"            
+        }
+        ,
+        "IZZO_TABLE" : {
+            "TABLE_ID" : "***",
+            "VIEW_ID": "***"
+        }
+     } 
+}

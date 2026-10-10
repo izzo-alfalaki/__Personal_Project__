@@ -76,6 +76,9 @@ class LarkSDK:
         return all_records
     
     def CreateBatchTable( self, name ):
+        """
+        if not list, or if table we search in list is not available, we can create one (or more)
+        """
         request: BatchCreateAppTableRequest = BatchCreateAppTableRequest.builder() \
             .app_token(self.base_token) \
             .request_body(BatchCreateAppTableRequestBody.builder()
@@ -95,6 +98,10 @@ class LarkSDK:
     # ----------------------------------------------------------------- #
 
     def df_to_records(self, df: pd.DataFrame):
+        """
+        in order to create records / update bit-table with append metyhod, we need to 
+        convert df to dictionary
+        """
         date_col = [ c for c in df.select_dtypes( include=[ 'datetime', 'datetime64', 'datetime64[ms, UTC]' ]).columns ]
         
         for c in date_col:
@@ -104,6 +111,9 @@ class LarkSDK:
         return load
 
     def load_record( self, df ):
+        """
+        once converted from df_to_record , we insert record, row by row to appTableRecord bilder
+        """
         load_records = [
                     AppTableRecord.builder().fields(record).build()
                     for record in self.df_to_records( df )
@@ -115,6 +125,9 @@ class LarkSDK:
     
     def CreateRecords( self, df, custom_table_id = None ):
         """
+        once we parsed  the df, now bit-table is ready for update, this function edit / append
+        new rows to bit-table.  
+
         schema:
         {
             "GroupChat":[{"id":"oc_cd07f55f14d6f4a4f1b51504e7e97f48"}],
@@ -154,6 +167,11 @@ class LarkSDK:
     # ----------------------------------------------------------------- #
     
     def SearchRecord( self ):
+        """
+        apart from engineering report ( sql-model to lark ), we can also use lark as ETL sourcews.
+        namely if we need data from lark bit-table, we can read data from there using SearchRecord 
+        then with df, we can upload it to database
+        """
         page_token = None
         all_records = []
 
@@ -191,8 +209,8 @@ class LarkSDK:
     def UpdateRecordData( self, df, record_id ):
         """
         Actually ignore this guy ah, update is not really needed for now but maybe some occasion we do ah
-        """
-        """
+        
+        schema (from references, Lark oapi docuemntation ): 
         request: UpdateAppTableRecordRequest = UpdateAppTableRecordRequest.builder() \
                 .app_token("appbcbWCzen6D8dezhoCH2RpMAh") \
                 .table_id("tblsRc9GRRXKqhvW") \

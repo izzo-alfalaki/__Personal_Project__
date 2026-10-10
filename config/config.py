@@ -1,3 +1,58 @@
+"""
+my config system:
+
+my config was stored in json, and all config json was added to .gitignore
+
+when unning on local / vscode, i can call, load and read upon json files
+most of the time, my json files comes as non single valie, but like dictionary:
+
+namely: 
+larkconfog.py
+
+{ 
+  'base_token_A' : {
+        'token' : '***',
+        'all_table' : {
+                        'table_a' : '***', 
+                        'table_b' : '***',
+                        'table_c' : '***'
+                    }
+                    ,
+        'all_view' : {
+                        'view_a' : '***', 
+                        'view_b' : '***',
+                        'view_c' : '***'
+                    }
+    },
+
+  'base_token_B' : {
+        'token' : '***',
+        'all_table' : {
+                        'table_a' : '***', 
+                        'table_b' : '***',
+                        'table_c' : '***'
+                    }
+                    ,
+        'all_view' : {
+                        'view_a' : '***', 
+                        'view_b' : '***',
+                        'view_c' : '***'
+                    }
+    }
+}
+
+using this json. we will un-pack it at mainconfig.py
+namely;
+
+  with open( 'path/json', 'r' ) as f:
+    config = json.load( f )
+
+  then let say we need can assign config as 
+
+base_tokena config ...
+
+"""
+
 import os
 import json
     
