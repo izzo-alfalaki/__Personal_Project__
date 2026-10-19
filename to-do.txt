@@ -1,8 +1,5 @@
-1. test search record, ✅
-2. send search response , parse and to_bigquery ✅
-3. recall from bq of searchrecord table,
-    -- if needed, we can use in update record since update rexord currently log : record not found 
+progress bar -- __Personal_Project__\common\utility\mysqlutility.py
 
-
-
-4. transfer test.py ke larkpipelines.py ✅
+pull the employee table, clean and load to mysql
+send to bq as aggregated table
+visualize smth in looker

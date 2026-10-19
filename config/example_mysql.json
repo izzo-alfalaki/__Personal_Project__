@@ -1,0 +1,30 @@
+{
+  "all" : [  
+    {
+        "package" : "izzo", "meta" : {
+            "MYSQL_USER": "r***",
+            "MYSQL_PASSWORD": "p***",
+            "MYSQL_HOST": "host***",
+            "MYSQL_PORT": "1234",
+            "MYSQL_DATABASE": {
+                "A" : "A_database",
+                "B" : "B_database",
+                "C" : "C_database"
+            }
+    }
+    } ,
+
+    {
+        "package" : "another_izzo", "meta" : {
+            "MYSQL_USER": "r***",
+            "MYSQL_PASSWORD": "p***",
+            "MYSQL_HOST": "host***",
+            "MYSQL_PORT": "1234",
+            "MYSQL_DATABASE": {
+            "A" : "A_database",
+            "B" : "B_database",
+            "C" : "C_database"}
+        }
+    }
+  ]
+}
