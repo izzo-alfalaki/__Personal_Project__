@@ -7,7 +7,6 @@ ENV/
 .vscode/
 .idea/
 .env
-
 # ==========================================
 # Python Bytecode & Cache
 # ==========================================
@@ -42,5 +41,3 @@ config/mysql.json
 # ==========================================
 # Personal Notes & Documentation Drafts
 # ==========================================
-to-do-list.txt
-#repodesign.txt
