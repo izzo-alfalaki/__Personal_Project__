@@ -46,39 +46,3 @@ class MySQLConnector:
                 index=False,
                 chunksize=1000
             )
-
-df = pd.json_normalize( 
-    {
-        'name' : 'Izzat',
-        'employee_id' :  270603060409,
-        'poistion' :  'data engineer' ,
-        'date of birth' : '2001-06-27', 
-        'salary' :  7500 ,
-        'desc' : {
-            'nickname' : 'izzo',
-            'height' : 'six deuce (maybe)',
-            'age' : 25,
-            'street' : 'Lebai Nawi',
-            'salary_desire' : '3 million dollars, cash',
-            'kids' : [ 'Ishak', 'Ar-Razzi', 'Ar-Rizki', 'Arshadi', 'Siti Mawar Kembang Sekebun']
-        }
-    },
-    {
-            'name' : 'ismail',
-            'employee_id' :  123456789123,
-            'poistion' :  'data engineer' ,
-            'date of birth' : '2001-06-27', 
-            'salary' :  7500 ,
-            'desc' : {
-                'nickname' : 'izzo',
-                'height' : 'six deuce (maybe)',
-                'age' : 25,
-                'street' : 'Lebai Nawi',
-                'salary_desire' : '3 million dollars, cash',
-                'kids' : [ 'Ishak', 'Ar-Razzi', 'Ar-Rizki', 'Arshadi', 'Siti Mawar Kembang Sekebun']
-            }
-        }
- 
- )
-
-MySQLConnector().load_df_to_table( df, table_name='employee', if_exists='replace')

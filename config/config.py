@@ -3,8 +3,8 @@ my config system:
 
 my config was stored in json, and all config json was added to .gitignore
 
-when unning on local / vscode, i can call, load and read upon json files
-most of the time, my json files comes as non single valie, but like dictionary:
+when running on local / vscode, i can call, load and read upon json files
+most of the time, my json files comes as non single value, but like dictionary:
 
 namely: 
 larkconfog.py

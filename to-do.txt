@@ -3,3 +3,5 @@ progress bar -- __Personal_Project__\common\utility\mysqlutility.py
 pull the employee table, clean and load to mysql
 send to bq as aggregated table
 visualize smth in looker
+
+- design logic : how many ways to upload to bq and handle fails.
