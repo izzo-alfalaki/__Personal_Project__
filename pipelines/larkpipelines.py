@@ -1,28 +1,23 @@
 from common.connection.larkclient import LarkClient
 from common.utility.bigqueryutility import BigQuery
+
 from common.utility.larkutillitysdk import LarkSDK
 from common.connection.gcpclient import GcpClient
+
 from config.lark_report_table import *
+
+from common.utility.mysqlutility import MySQL
+from common.connection.mysql import MysqlClient
+
+
 import pandas as pd
 import ast
 
 class LarkPipelines:
     def __init__(self):
-        self.Lark = LarkSDK( LarkClient, BASE_TOKEN, IZZO_TABLE )
-        self.BigQuery = BigQuery( GcpClient().bq_client(), GcpClient().get_credits(), GcpClient.project_id )
-
-
-    def lark_get_table_id( self ):
-        response = self.Lark.ListTables()
-
-        if response is None:
-            return pd.DataFrame()  # []
-
-        df = pd.json_normalize( response )
-
-        # ids = df['table_id'].tolist()
-
-        return df
+        self.Lark = LarkSDK( client=LarkClient, app_token=BASE_TOKEN, report = EMPLOYEE )
+        self.mysql = MySQL( client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )) 
+        self.BigQuery = BigQuery( GcpClient().bq_client(), GcpClient().get_credits(), GcpClient().project_id )
 
     def get_table_from_bq( self ):
         self.BigQuery.push_query( 'call example.stored_procedure();' )
@@ -60,11 +55,27 @@ class LarkPipelines:
         df = self.lark_get_table_id()
         self.lark_create_record_to_lark( df )
 
-    def get_report_from_lark(self):
-        res = self.Lark.SearchRecord()
-        df = pd.json_normalize( res )
-        print(df.info())
+    def lark_get_table_list( self ):
+        response = self.Lark.ListTables()
 
+        if response is None:
+            return pd.DataFrame()  # []
+
+        df = pd.json_normalize( response )
+
+        # ids = df['table_id'].tolist()
+
+        return df
+    
+    def get_report_from_lark(self, **kwargs):
+        res = self.Lark.SearchRecord( **kwargs )
+        if res is None:
+            return pd.DataFrame()
+        df = pd.json_normalize( res )
+        print(f'checking extrat result: {len(df)}')
+        return df
+
+    def general_standard_clean(self, df) -> pd.DataFrame:
         for c in df.columns:
             if isinstance( df[c], str):
                 try:
@@ -75,31 +86,31 @@ class LarkPipelines:
             df[c] = df[c].apply( lambda x: x[0] if (isinstance( x, list ) and x[0]) else x )
     
             try:
-                df['file_token'] = df[c].apply( lambda x: x['file_token'] )
-                df['url'] = df[c].apply( lambda x: x['url'] )
-            except Exception as e:
-                print(e)
-
-            try:
-                df['name_value'] = df[c].apply( lambda x: x['text'] )
+                df[c] = df[c].apply( lambda x: x['text'] if x['text'] else x )
             except Exception as e:
                 print(e)
 
         for c in [c for c in df.columns if 'date' in c.lower()]:
             df[c] = pd.to_datetime( 
                         df[c], unit='ms', utc=True 
-                        )#.dt.tz_convert('Asia/Kuala_Lumpur')
+                        ).dt.tz_convert('Asia/Kuala_Lumpur')
 
         df.columns = df.columns.str.replace( 'fields.', '' ).str.replace('.',  '_').str.lower()
-
+        use_col = [  c for c in df.columns if 'type' not in c.lower() ]
+        df = df[ use_col ]
+        
         return df
+
+    def send_report_to_mysql( self, df, table_name ):
+        self.mysql.load_df_to_table(
+            df, table_name, if_exists='append'
+        ) 
 
     def send_report_to_bigquery(self, df ):
         self.BigQuery.df_to_bq( df, 'Lark', 'Table_Izzo', new=False )
 
     def full_lark_to_bq( self ):
-        df = self.get_report_from_lark()
-        self.send_report_to_bigquery(df)
+        ...   
 
     def update_report_in_lark( self ):
         """

@@ -31,7 +31,7 @@ config/izzo.json
 config/git.json
 config/lark.json
 config/mysql.json
-config/lark_report_table.json
+config/lark_report_tables.json
 
 # ==========================================
 # Logs & Scheduler Outputs

@@ -6,10 +6,8 @@ packages = os.getenv("MYSQL_USER", {})
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
-from config.mysqlconfig import main
-
 from urllib.parse import quote_plus
-
+from config.mysqlconfig import main
 """
         this is mysql connection, here, we commit to create an engine, and
         namely we had many users, so we design this functionn such that it 
@@ -22,7 +20,7 @@ from urllib.parse import quote_plus
         user_package = from cnfig.mysqlconfig import IZZO
         """
 
-class MySQL:
+class MysqlClient:
     def __init__(self):
         self.load = main 
         if not main:

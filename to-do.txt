@@ -1,6 +1,7 @@
-progress bar -- __Personal_Project__\common\utility\mysqlutility.py
+progress bar -- __Personal_Project__\mainn\larkmain.py
 
-pull the employee table, clean and load to mysql
+pull the employee table (done), 
+clean and load to mysql
 send to bq as aggregated table
 visualize smth in looker
 

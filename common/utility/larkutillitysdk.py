@@ -120,58 +120,58 @@ class LarkSDK:
                 ]
         return load_records    
 
-    # ----------------------------------------------------------------- #
-    # ----------------------------------------------------------------- #
-    
     def CreateRecords( self, df, custom_table_id = None ):
-        """
-        once we parsed  the df, now bit-table is ready for update, this function edit / append
-        new rows to bit-table.  
-
-        schema:
-        {
-            "GroupChat":[{"id":"oc_cd07f55f14d6f4a4f1b51504e7e97f48"}],
-            "attachment":[{"file_token":"DRiFbwaKsoZaLax4WKZbEGCccoe"},{"file_token":"BZk3bL1Enoy4pzxaPL9bNeKqcLe"},{"file_token":"EmL4bhjFFovrt9xZgaSbjJk9c1b"},{"file_token":"Vl3FbVkvnowlgpxpqsAbBrtFcrd"}],
-            "barcode":"qawqe",
-            "checkbox":true,
-            "currency":3,
-            "date":1674206443000,
-            "duplex_link":["recHTLvO7x","recbS8zb2m"],
-            "location":"116.397755,39.903179",
-            "multi_select":["option_1","option_2"],
-            "number":100,
-            "phone":"13026162666",
-            "progress":0.25,
-            "rating":3,
-            "single_link":["recHTLvO7x","recbS8zb2m"],
-            "single_select":"option_1",
-            "text":"text",
-            "url":{"link":"https://www.larksuite.com/product/base","text":"Base"},
-            "user":[{"id":"ou_2910013f1e6456f16a0ce75ede950a0a"},{"id":"ou_e04138c9633dd0d2ea166d79f548ab5d"}]
-        }
-        """
-        request: BatchCreateAppTableRecordRequest = BatchCreateAppTableRecordRequest.builder() \
-            .app_token(self.base_token) \
-            .table_id(self.table_id if custom_table_id is None else custom_table_id) \
-            .request_body(BatchCreateAppTableRecordRequestBody.builder()
-                .records(self.load_record(df))
-                .build()) \
-            .build()
-
-        response: BatchCreateAppTableRecordResponse = self.client.bitable.v1.app_table_record.batch_create(request)
-        x = self.log_return( response )
-
-        return x
+            """
+            once we parsed  the df, now bit-table is ready for update, this function edit / append
+            new rows to bit-table.  
     
+            schema:
+            {
+                "GroupChat":[{"id":"oc_cd07f55f14d6f4a4f1b51504e7e97f48"}],
+                "attachment":[{"file_token":"DRiFbwaKsoZaLax4WKZbEGCccoe"},{"file_token":"BZk3bL1Enoy4pzxaPL9bNeKqcLe"},{"file_token":"EmL4bhjFFovrt9xZgaSbjJk9c1b"},{"file_token":"Vl3FbVkvnowlgpxpqsAbBrtFcrd"}],
+                "barcode":"qawqe",
+                "checkbox":true,
+                "currency":3,
+                "date":1674206443000,
+                "duplex_link":["recHTLvO7x","recbS8zb2m"],
+                "location":"116.397755,39.903179",
+                "multi_select":["option_1","option_2"],
+                "number":100,
+                "phone":"13026162666",
+                "progress":0.25,
+                "rating":3,
+                "single_link":["recHTLvO7x","recbS8zb2m"],
+                "single_select":"option_1",
+                "text":"text",
+                "url":{"link":"https://www.larksuite.com/product/base","text":"Base"},
+                "user":[{"id":"ou_2910013f1e6456f16a0ce75ede950a0a"},{"id":"ou_e04138c9633dd0d2ea166d79f548ab5d"}]
+            }
+            """
+            request: BatchCreateAppTableRecordRequest = BatchCreateAppTableRecordRequest.builder() \
+                .app_token(self.base_token) \
+                .table_id(self.table_id if custom_table_id is None else custom_table_id) \
+                .request_body(BatchCreateAppTableRecordRequestBody.builder()
+                    .records(self.load_record(df))
+                    .build()) \
+                .build()
+    
+            response: BatchCreateAppTableRecordResponse = self.client.bitable.v1.app_table_record.batch_create(request)
+            x = self.log_return( response )
+    
+            return x
+        
     # ----------------------------------------------------------------- #
     # ----------------------------------------------------------------- #
     
-    def SearchRecord( self ):
+    def SearchRecord( self, new_table_id = None ) -> json :
         """
         apart from engineering report ( sql-model to lark ), we can also use lark as ETL sourcews.
         namely if we need data from lark bit-table, we can read data from there using SearchRecord 
         then with df, we can upload it to database
         """
+        if new_table_id is None:
+            new_table_id = self.table_id
+
         page_token = None
         all_records = []
 
@@ -183,7 +183,7 @@ class LarkSDK:
             
             request: SearchAppTableRecordRequest = SearchAppTableRecordRequest.builder() \
             .app_token(self.base_token) \
-            .table_id(self.table_id) \
+            .table_id(new_table_id) \
             .page_size(500) \
             .request_body(body.build()) \
             .build()

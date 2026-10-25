@@ -1,12 +1,9 @@
-from common.connection.mysql import MySQL
-client = MySQL().engine(  user_package = 'izzo', database = 'raw' )
-
 import json
 import pandas as pd
 from sqlalchemy import text
 
-class MySQLConnector:
-    def __init__(self):
+class MySQL:
+    def __init__(self, client):
         self.engine = client
 
     def query_to_df(self, query: str, params: dict | None = None) -> pd.DataFrame:
