@@ -23,7 +23,7 @@ This repository uses a structural hierarchy calls, Which means:
 ```text
 my_pipeline_repo/
 ├── config/
-│   └── settings.py          
+│   └── configurations files: includes py, json, and thats prety mucb it           
 ├── common/
 │   ├── connection.py        
 │   ├── github.py            
@@ -32,6 +32,5 @@ my_pipeline_repo/
 │   └── lark.py              
 ├── pipelines/
 │   └── workflow_pipeline.py # End-to-end orchestration bridge
-├── .env.example             # Template for local environment variables
 ├── requirements.txt         # Minimal direct dependency manifest
 └── README.md
