@@ -15,7 +15,7 @@ This repository uses a structural hierarchy calls, Which means:
 3. **Modular Service Connectors (`common/`):** Layer-specific modules contain zero hardcoded credentials or cross-service dependencies. `lark.py` handles Lark, `mysql.py` handles MySQL—keeping modules testable and reusable on any assigned workflow.
 4. **Pipeline Orchestrator (`pipelines/`):** Acts as the execution bridge, managing data lineage from extraction (`GitHub/MySQL`) to transformation (`Pandas`) and loading (`BigQuery/Lark`).
 
-***notes: two committers, my actual account izzo-alfalaki, and kenjodataentry is an account which is no longer mine, but thats actually me, so two acc for one person, so this repo was one-man land***
+*notes: two committers, my actual account is izzo-alfalaki, the kenjodataentry is an account which is no longer mine, but thats actually me, so two acc for one person, so this repo was one-man land*
 ---
 
 ## Repository Structure
