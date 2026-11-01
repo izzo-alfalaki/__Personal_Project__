@@ -23,13 +23,13 @@ This repository uses a structural hierarchy calls, Which means:
 ```text
 my_pipeline_repo/
 ├── config/
-│   └── settings.py          # Environment variables & non-secret configs
+│   └── settings.py          
 ├── common/
-│   ├── connection.py        # Singleton client factory (SQLAlchemy & APIs)
-│   ├── github.py            # GitHub REST API connector with robust pagination
-│   ├── mysql.py             # SQLAlchemy 2.0 database wrapper
-│   ├── bigquery.py          # BigQuery integration helpers
-│   └── lark.py              # Lark Bitable record sync wrapper
+│   ├── connection.py        
+│   ├── github.py            
+│   ├── mysql.py             
+│   ├── bigquery.py          
+│   └── lark.py              
 ├── pipelines/
 │   └── workflow_pipeline.py # End-to-end orchestration bridge
 ├── .env.example             # Template for local environment variables
