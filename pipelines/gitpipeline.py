@@ -38,7 +38,10 @@ class ETL:
     def __init__(self):
         self.runner = GitPipelines()
 
-    def inloop_clean(self, df):
+    def inloop_clean(self, df : pd.DataFrame ):
+        if df is None or df.empty:
+            return pd.DataFrame()
+        
         df['billable.UBUNTU.job_runs'] = \
         df['billable.UBUNTU.job_runs'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
         df.explode('billable.UBUNTU.job_runs', ignore_index=True)
@@ -53,7 +56,10 @@ class ETL:
 
         return df
 
-    def clean_all( self, dx, dy):
+    def clean_all( self, dx : pd.DataFrame , dy : pd.DataFrame ):
+            if dx is None or dx.empty:
+                return pd.DataFrame()
+            
             xcol = ['id', 'name','run_number','created_at','updated_at','run_attempt','run_started_at','actor.type','triggering_actor.login','head_commit.author.email','repository.full_name','repository.owner.login' ]
             report = pd.merge( 
                 dx[[ x for x in xcol if x in dx.columns  ]], 
@@ -84,8 +90,7 @@ class ETL:
             res = self.runner.Git.get_run_timing( x )
 
             if not res:
-                df = pd.DataFrame()
-                pass
+                continue
 
             df = pd.json_normalize( res
                                     #, record_path=['billable', 'UBUNTU', 'job_runs'],
@@ -96,9 +101,15 @@ class ETL:
                                     #        ])
             )
             df = self.inloop_clean( df )
+            if df is None or df.empty:
+                continue
+            
             df['id'] = x
             data.append( df )
 
+        if not data:
+            return pd.DataFrame()
+        
         dy = pd.concat( data )
         report = self.clean_all( dx, dy )
 
@@ -139,6 +150,9 @@ class PostETL:
                   t.fetch_date between (mxdt.x - interval 7 day ) and mxdt.x;
                 """
                 ) 
+
+        if df.empty or df is None:
+            raise ValueError( 'df is NoneType' )
 
         self.runner.BigQuery.df_to_bq( df, 'Git', 'Actions_Report', False)
 

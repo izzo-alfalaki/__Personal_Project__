@@ -24,14 +24,13 @@ class LarkPipelines:
         if response is None:
             return pd.DataFrame()  # []
 
-        print( response )
         df = pd.json_normalize( response )
 
         # ids = df['table_id'].tolist()
 
         return df
 
-class CRM_DB:
+class ETL:
     def __init__(self):
         self.runner = LarkPipelines()
 
@@ -59,7 +58,7 @@ class CRM_DB:
 
         return df
 
-    def clean_employee_table(df : pd.DataFrame ) -> pd.DataFrame:
+    def clean_employee_table( self, df : pd.DataFrame ) -> pd.DataFrame:
         
         num_cols_need_clean = [  
                 'age_value' , 'available leave this year_value' , 'contract left ( month )_value' , 'loyalty payout_value' , 'requestabe annual leave_value' , 'resign notice ( days )_value' , 'cummulative performance_value'
@@ -73,7 +72,7 @@ class CRM_DB:
         df.columns = df.columns.str.split( '_' ).str[0]
         return df
 
-    def clean_salary_table(df : pd.DataFrame, production : bool = False ) -> pd.DataFrame:
+    def clean_salary_table( self, df : pd.DataFrame, production : bool = True ) -> pd.DataFrame:
         for x in [ 'qualified position', 'base bonus_value', 'base pay_value']:  
             df[x] = df[x].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
             if not x == 'qualified position':
@@ -98,7 +97,6 @@ class CRM_DB:
         
         initdf = pd.json_normalize( res )
         print(f'PRE: checking extract reponse: {len(initdf)}')
-        print(initdf)
 
         df = self.general_standard_clean(initdf)
         print(f'POST: checking extract reponse: {len(df)}')
@@ -143,9 +141,11 @@ class CRM_DB:
                     # this is stage data, so we dont sell to bq, preserved for agg
                     # self.BigQuery.df_to_bq( df, 'Lark', clean_name, new=False )                    
                     
+                    fetch_df[ 'unique_timestamp' ] = str(pd.Timestamp.now()) 
+
                     clean_name = key.lower().replace(' ', '_')
                     self.runner.mysql.load_df_to_table(
-                        df, clean_name, if_exists='append'
+                        fetch_df, clean_name, if_exists='replace'
                         ) 
                 
                 except Exception as e:
@@ -154,9 +154,44 @@ class CRM_DB:
             else:
                 fetch_df.to_csv( f"mysql_{clean_name}_table.csv", index=False )
 
-class DB_CRM:
+class PostETL:
     def __init__(self):
         self.runner = LarkPipelines()
+
+    def mysql_to_bq( self ):
+        ql = [
+            """
+                select * from employee_table 
+                qualify ROW_NUMBER() over ( 
+                    partition by record order by CAST(
+                        left(unique_timestamp, 18) as DATETIME
+                    ) DESC ) = 1 ; 
+
+            """
+            ,
+            """
+            select * from salary_table
+                qualify ROW_NUMBER() over ( 
+                partition by record_id, qualified_position order by CAST(
+                    left(unique_timestamp, 18) as DATETIME
+                ) DESC ) = 1;
+            """
+            ]
+        
+        for x, q in zip( [ 'employee_table', 'salary_table' ], ql ) :
+            try:
+                df = self.runner.mysql.query_to_df( q )
+        
+                if df is None:
+                    raise ValueError( 'df is NoneType' )
+                if df.empty:
+                    raise ValueError( 'df is Empty' )            
+
+                self.runner.BigQuery.df_to_bq( df, 'Lark', x.title().split('_')[0])
+
+            except Exception as e:
+                print( f'decide the stage error: {e}' )
+                pass
 
     def get_table_from_db( self, bigquery = True ):
         #- pulling data from report always agg-level, so from bq
@@ -166,7 +201,7 @@ class DB_CRM:
 
         if bigquery:
             self.runner.BigQuery.push_query( 'call example.stored_procedure();' )
-            df = self.runner.BigQuery.query_to_dataframe( 'select * from Lark.Post_Table;' )
+            df = self.runner.BigQuery.query_to_dataframe( 'select * from Lark.EmployeeModel;' )
 
         return df 
 

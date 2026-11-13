@@ -1,0 +1,2130 @@
+[
+    {
+        "fields": {
+            "Base Increment per Year": 100,
+            "Base Salary": 1700,
+            "Department": [
+                {
+                    "text": "sales & marketing",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "High School",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    1000
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1700
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "sales & marketing High School",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB2kCdOk3"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 150,
+            "Base Salary": 2200,
+            "Department": [
+                {
+                    "text": "sales & marketing",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Diploma",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    1000
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2200
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "sales & marketing Diploma",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB2kChzVy"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 175,
+            "Base Salary": 3000,
+            "Department": [
+                {
+                    "text": "sales & marketing",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Degree",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Exec",
+                "Staff",
+                "Senior Staff",
+                "Leader"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    1000
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    3000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "sales & marketing Degree",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB2kCjdmc"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 4500,
+            "Department": [
+                {
+                    "text": "sales & marketing",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Masters",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Leader",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    1000
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    4500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "sales & marketing Masters",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB2kCgVTZ"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 6000,
+            "Department": [
+                {
+                    "text": "sales & marketing",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "PHD",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Manager"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    1000
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    6000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "sales & marketing PHD",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB2kChZRb"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 50,
+            "Base Salary": 1500,
+            "Department": [
+                {
+                    "text": "sales & marketing",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Under Graduate",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    1000
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "sales & marketing Under Graduate",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB6Sn71Bd"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 100,
+            "Base Salary": 1700,
+            "Department": [
+                {
+                    "text": "warehouses & logistic",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "High School",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    500
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1700
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "warehouses & logistic High School",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB6Sn56WV"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 150,
+            "Base Salary": 2200,
+            "Department": [
+                {
+                    "text": "warehouses & logistic",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Diploma",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    500
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2200
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "warehouses & logistic Diploma",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB6Sn6S28"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 175,
+            "Base Salary": 3000,
+            "Department": [
+                {
+                    "text": "warehouses & logistic",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Degree",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Exec",
+                "Staff",
+                "Senior Staff",
+                "Leader"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    500
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    3000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "warehouses & logistic Degree",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB6qIWRa6"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 4500,
+            "Department": [
+                {
+                    "text": "warehouses & logistic",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Masters",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Leader",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    500
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    4500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "warehouses & logistic Masters",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7i3nPff"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 6000,
+            "Department": [
+                {
+                    "text": "warehouses & logistic",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "PHD",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Manager"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    500
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    6000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "warehouses & logistic PHD",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7i3nDu0"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 50,
+            "Base Salary": 1700,
+            "Department": [
+                {
+                    "text": "warehouses & logistic",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Under Graduate",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    500
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1700
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "warehouses & logistic Under Graduate",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7i3n4Wh"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 100,
+            "Base Salary": 2200,
+            "Department": [
+                {
+                    "text": "customer service",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "High School",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    350
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2200
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "customer service High School",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7i3kbeX"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 150,
+            "Base Salary": 3000,
+            "Department": [
+                {
+                    "text": "customer service",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Diploma",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    350
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    3000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "customer service Diploma",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7v1nIqc"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 175,
+            "Base Salary": 4500,
+            "Department": [
+                {
+                    "text": "customer service",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Degree",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Exec",
+                "Staff",
+                "Senior Staff",
+                "Leader"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    350
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    4500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "customer service Degree",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7v1mJI3"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 6000,
+            "Department": [
+                {
+                    "text": "customer service",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Masters",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Leader",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    350
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    6000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "customer service Masters",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7v1nfJH"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 1500,
+            "Department": [
+                {
+                    "text": "customer service",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "PHD",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Manager"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    350
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "customer service PHD",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7v1o0CS"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 50,
+            "Base Salary": 1500,
+            "Department": [
+                {
+                    "text": "customer service",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Under Graduate",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    350
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "customer service Under Graduate",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7v1mECl"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 100,
+            "Base Salary": 1700,
+            "Department": [
+                {
+                    "text": "HR",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "High School",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1850
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "HR High School",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7wqUMOW"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 150,
+            "Base Salary": 2200,
+            "Department": [
+                {
+                    "text": "HR",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Diploma",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2350
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "HR Diploma",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7yIpY0S"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 175,
+            "Base Salary": 3000,
+            "Department": [
+                {
+                    "text": "HR",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Degree",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Exec",
+                "Staff",
+                "Senior Staff",
+                "Leader"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    3150
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "HR Degree",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7yImZ6l"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 4500,
+            "Department": [
+                {
+                    "text": "HR",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Masters",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Leader",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    4650
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "HR Masters",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7yIo7KI"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 6000,
+            "Department": [
+                {
+                    "text": "HR",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "PHD",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Manager"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    6150
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "HR PHD",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7yIm7EE"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 50,
+            "Base Salary": 1500,
+            "Department": [
+                {
+                    "text": "HR",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Under Graduate",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1650
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "HR Under Graduate",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB7yIo8xZ"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 100,
+            "Base Salary": 1700,
+            "Department": [
+                {
+                    "text": "lab",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "High School",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    400
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1870
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "lab High School",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8FGaeZG"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 150,
+            "Base Salary": 2200,
+            "Department": [
+                {
+                    "text": "lab",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Diploma",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    400
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2370
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "lab Diploma",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8FGcUcx"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 175,
+            "Base Salary": 3000,
+            "Department": [
+                {
+                    "text": "lab",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Degree",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Exec",
+                "Staff",
+                "Senior Staff",
+                "Leader"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    400
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    3170
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "lab Degree",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8FGdDxt"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 4500,
+            "Department": [
+                {
+                    "text": "lab",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Masters",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Leader",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    400
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    4670
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "lab Masters",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8Lc34n8"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 6000,
+            "Department": [
+                {
+                    "text": "lab",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "PHD",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Manager"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    400
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    6170
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "lab PHD",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8Oiazhj"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 50,
+            "Base Salary": 1500,
+            "Department": [
+                {
+                    "text": "lab",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Under Graduate",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    400
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1670
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "lab Under Graduate",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8OiaW0y"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 100,
+            "Base Salary": 1700,
+            "Department": [
+                {
+                    "text": "Admin",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "High School",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    200
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1700
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "Admin High School",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8eAunLb"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 150,
+            "Base Salary": 2200,
+            "Department": [
+                {
+                    "text": "Admin",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Diploma",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    200
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2200
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "Admin Diploma",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8gNuNzH"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 175,
+            "Base Salary": 3000,
+            "Department": [
+                {
+                    "text": "Admin",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Degree",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Exec",
+                "Staff",
+                "Senior Staff",
+                "Leader"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    200
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    3000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "Admin Degree",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8gNsggS"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 4500,
+            "Department": [
+                {
+                    "text": "Admin",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Masters",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Leader",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    200
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    4500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "Admin Masters",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8gNsekP"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 6000,
+            "Department": [
+                {
+                    "text": "Admin",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "PHD",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Manager"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    200
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    6000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "Admin PHD",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8gNsery"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 50,
+            "Base Salary": 1500,
+            "Department": [
+                {
+                    "text": "Admin",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Under Graduate",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    200
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "Admin Under Graduate",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8gNsPa4"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 100,
+            "Base Salary": 1700,
+            "Department": [
+                {
+                    "text": "IT",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "High School",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2200
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "IT High School",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8xakwyK"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 150,
+            "Base Salary": 2200,
+            "Department": [
+                {
+                    "text": "IT",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Diploma",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2700
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "IT Diploma",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8yuQQuA"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 175,
+            "Base Salary": 3000,
+            "Department": [
+                {
+                    "text": "IT",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Degree",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Exec",
+                "Staff",
+                "Senior Staff",
+                "Leader"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    3500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "IT Degree",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8yuRbzJ"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 4500,
+            "Department": [
+                {
+                    "text": "IT",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Masters",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Leader",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    5000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "IT Masters",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8yuOgTD"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 6000,
+            "Department": [
+                {
+                    "text": "IT",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "PHD",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Manager"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    6500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "IT PHD",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8yuNY6z"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 50,
+            "Base Salary": 1500,
+            "Department": [
+                {
+                    "text": "IT",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Under Graduate",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "IT Under Graduate",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB8yuNyXP"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 100,
+            "Base Salary": 1700,
+            "Department": [
+                {
+                    "text": "accounting",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "High School",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2000
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "accounting High School",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB9GpmKuc"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 150,
+            "Base Salary": 2200,
+            "Department": [
+                {
+                    "text": "accounting",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Diploma",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    2500
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "accounting Diploma",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB9PkXMDA"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 175,
+            "Base Salary": 3000,
+            "Department": [
+                {
+                    "text": "accounting",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Degree",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Exec",
+                "Staff",
+                "Senior Staff",
+                "Leader"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    3300
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "accounting Degree",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB9PkZyik"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 4500,
+            "Department": [
+                {
+                    "text": "accounting",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Masters",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Leader",
+                "Exec"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    4800
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "accounting Masters",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB9PkYbNA"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 200,
+            "Base Salary": 6000,
+            "Department": [
+                {
+                    "text": "accounting",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "PHD",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Manager"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    6300
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "accounting PHD",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB9PkaKTE"
+    },
+    {
+        "fields": {
+            "Base Increment per Year": 50,
+            "Base Salary": 1500,
+            "Department": [
+                {
+                    "text": "accounting",
+                    "type": "text"
+                }
+            ],
+            "Qualification": [
+                {
+                    "text": "Under Graduate",
+                    "type": "text"
+                }
+            ],
+            "Qualified Position": [
+                "Staff",
+                "Senior Staff"
+            ],
+            "base bonus": {
+                "type": 2,
+                "value": [
+                    300
+                ]
+            },
+            "base pay": {
+                "type": 2,
+                "value": [
+                    1800
+                ]
+            },
+            "lookup_id": {
+                "type": 1,
+                "value": [
+                    {
+                        "text": "accounting Under Graduate",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        "record_id": "reczz28PB9PkYYUH"
+    }
+]
