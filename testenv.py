@@ -1,9 +1,3 @@
-from pipelines.gitpipelinesdk import GitSDK
-
-def git():
-    run = GitSDK()
-    run.update_report_in_lark()
-
 from common.connection.gitclient import GitClient
 from common.utility.gitutility import GitRequest
 import pandas as pd
@@ -31,3 +25,13 @@ def git():
     return id_list
 
 
+def main():
+    import json
+    with open("inspect.json", "r", encoding="utf-8") as f:
+        res = json.load(f)
+
+    df = pd.json_normalize( res )
+    print(df)
+
+if __name__ == '__main__':
+    main()

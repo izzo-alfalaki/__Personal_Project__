@@ -1,8 +1,10 @@
-progress bar -- __Personal_Project__\mainn\larkmain.py
+1 - finalize git pipelines
 
-pull the employee table (done), 
-clean and load to mysql
-send to bq as aggregated table
-visualize smth in looker
+1.1. check git pulled_data
+1.2. extend tables
+1.3. git to mysql
+1.4. to bq
 
-- design logic : how many ways to upload to bq and handle fails.
+2 - study lark-data
+
+3 - shopee apipull workflow

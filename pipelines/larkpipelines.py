@@ -61,46 +61,55 @@ class LarkPipelines:
         if response is None:
             return pd.DataFrame()  # []
 
+        print( response )
         df = pd.json_normalize( response )
 
         # ids = df['table_id'].tolist()
 
         return df
-    
-    def get_report_from_lark(self, **kwargs):
-        res = self.Lark.SearchRecord( **kwargs )
-        if res is None:
-            return pd.DataFrame()
-        df = pd.json_normalize( res )
-        print(f'checking extrat result: {len(df)}')
-        return df
 
-    def general_standard_clean(self, df) -> pd.DataFrame:
-        for c in df.columns:
-            if isinstance( df[c], str):
-                try:
-                    df[c] = ast.literal_eval( df[c] )
-                except Exception as e:
-                    print(e)
-
-            df[c] = df[c].apply( lambda x: x[0] if (isinstance( x, list ) and x[0]) else x )
-    
-            try:
-                df[c] = df[c].apply( lambda x: x['text'] if x['text'] else x )
-            except Exception as e:
-                print(e)
-
+    def general_standard_clean( self, df : pd.DataFrame ) -> pd.DataFrame:
+        minus = df.select_dtypes(include= [ 'float', 'int', 'str'] ).columns.tolist()
+        for c in [ c for c in df.columns.tolist() if c not in minus ]:
+            df[c] = df[c].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+        
+            try:          
+                df[c] = df[c].apply( lambda x: x[0]['text'] if x[0]['text'] else x )
+            except:
+                pass
+            
         for c in [c for c in df.columns if 'date' in c.lower()]:
+            
+            df[c] = df[c].apply(lambda x: x[0] if isinstance(x, list) and len(x) > 0 else x)
+            
             df[c] = pd.to_datetime( 
-                        df[c], unit='ms', utc=True 
-                        ).dt.tz_convert('Asia/Kuala_Lumpur')
+                        df[c], unit='ms', utc=True, errors='coerce' 
+                            ).dt.tz_convert('Asia/Kuala_Lumpur')
 
         df.columns = df.columns.str.replace( 'fields.', '' ).str.replace('.',  '_').str.lower()
         use_col = [  c for c in df.columns if 'type' not in c.lower() ]
         df = df[ use_col ]
-        
+
         return df
 
+    def get_df_from_table_id(self, **kwargs):
+        res = self.Lark.SearchRecord( **kwargs )
+        if res is None:
+            return pd.DataFrame()
+
+        import json
+        with open("inspect.json", "w", encoding="utf-8") as f:       
+            json.dump(res, f, indent=4)
+        
+        initdf = pd.json_normalize( res )
+        print(f'PRE: checking extract reponse: {len(initdf)}')
+        print(initdf)
+
+        df = self.general_standard_clean(initdf)
+        print(f'POST: checking extract reponse: {len(df)}')
+
+        return df
+    
     def send_report_to_mysql( self, df, table_name ):
         self.mysql.load_df_to_table(
             df, table_name, if_exists='append'
