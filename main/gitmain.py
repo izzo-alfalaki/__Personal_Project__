@@ -1,10 +1,5 @@
-from pipelines.gitpipeline import GitPipelines
-
-def main():
-    execute = GitPipelines()
-    #execute.main()
-
-    print(execute.send_report_to_lark())
+from pipelines.gitpipeline import ETL, PostETL
 
 if __name__ == '__main__':
-    main()
+    ETL().etl()
+    PostETL().send_report_to_lark()

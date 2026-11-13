@@ -9,7 +9,6 @@ from config.lark_report_table import *
 from common.utility.mysqlutility import MySQL
 from common.connection.mysql import MysqlClient
 
-
 import pandas as pd
 import ast
 
@@ -18,42 +17,6 @@ class LarkPipelines:
         self.Lark = LarkSDK( client=LarkClient, app_token=BASE_TOKEN, report = EMPLOYEE )
         self.mysql = MySQL( client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )) 
         self.BigQuery = BigQuery( GcpClient().bq_client(), GcpClient().get_credits(), GcpClient().project_id )
-
-    def get_table_from_bq( self ):
-        self.BigQuery.push_query( 'call example.stored_procedure();' )
-        df = self.BigQuery.query_to_dataframe( 'select * from Lark.Post_Table;' )
-
-        return df 
-
-    def lark_create_record_to_lark( self, df : pd.DataFrame, target_table = None, test_df = True ):
-        if df.empty:
-            return None
-
-        if target_table is None:
-            target_table =  'Post table'
-
-        check_table_exists = [ c for c in df['name'].tolist() if target_table in c ]
-        if not check_table_exists:
-            raise ValueError(f'{target_table} not found.')
-        
-        mask = df['name'] == target_table 
-        df = df.loc[mask]
-
-        table_id = df['table_id'].tolist()[0]
-
-        if test_df:
-            test_data = { 'Text' : [ 'IJAT' , 'ROSNA' ], 'Record ID' : [ '', '' ] , 'Date' : [ '2001/04/06', '2001/04/12'] }
-            test_data['Date'] = pd.to_datetime( test_data['Date'] )
-            insert_data = pd.DataFrame( test_data )
-
-        if not test_df:
-            insert_data = self.get_table_from_bq()
-
-        self.Lark.CreateRecords( insert_data , table_id)
-
-    def full_bq_to_lark( self ):
-        df = self.lark_get_table_id()
-        self.lark_create_record_to_lark( df )
 
     def lark_get_table_list( self ):
         response = self.Lark.ListTables()
@@ -67,6 +30,10 @@ class LarkPipelines:
         # ids = df['table_id'].tolist()
 
         return df
+
+class CRM_DB:
+    def __init__(self):
+        self.runner = LarkPipelines()
 
     def general_standard_clean( self, df : pd.DataFrame ) -> pd.DataFrame:
         minus = df.select_dtypes(include= [ 'float', 'int', 'str'] ).columns.tolist()
@@ -92,8 +59,36 @@ class LarkPipelines:
 
         return df
 
+    def clean_employee_table(df : pd.DataFrame ) -> pd.DataFrame:
+        
+        num_cols_need_clean = [  
+                'age_value' , 'available leave this year_value' , 'contract left ( month )_value' , 'loyalty payout_value' , 'requestabe annual leave_value' , 'resign notice ( days )_value' , 'cummulative performance_value'
+            ]
+
+        for c in num_cols_need_clean:
+            df[c] = df[c].apply(lambda x: x[0] if x[0] and len(x) > 0 else '0')
+            df[c] = pd.to_numeric( df[c], errors = 'coerce')
+            df[c] = df[c].fillna(0)
+
+        df.columns = df.columns.str.split( '_' ).str[0]
+        return df
+
+    def clean_salary_table(df : pd.DataFrame, production : bool = False ) -> pd.DataFrame:
+        for x in [ 'qualified position', 'base bonus_value', 'base pay_value']:  
+            df[x] = df[x].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+            if not x == 'qualified position':
+                df[x] = df[x].apply(lambda x: x[0] if len(x) <= 1 else x)
+
+        if production:
+            if 'qualified position' in df.columns:
+                df = df.explode('qualified position')
+            else:
+                print('WARNING: qualified position column not found in dataframe')
+        
+        return df
+
     def get_df_from_table_id(self, **kwargs):
-        res = self.Lark.SearchRecord( **kwargs )
+        res = self.runner.Lark.SearchRecord( **kwargs )
         if res is None:
             return pd.DataFrame()
 
@@ -109,17 +104,107 @@ class LarkPipelines:
         print(f'POST: checking extract reponse: {len(df)}')
 
         return df
+
+    def full_lark_to_db( self, production : bool = True ):
+        df = self.runner.lark_get_table_list()
+        if df.empty:
+            raise ValueError('No tables found in LarkBase.')
+
+        if not production:
+            df.to_csv( 'list_of_tables.csv', index=False )
+
+        manual_key = [ 'Employee Table', 'Salary Table' ]
+        test_table_id = [ df['table_id'].tolist()[0], df['table_id'].tolist()[1]]
     
-    def send_report_to_mysql( self, df, table_name ):
-        self.mysql.load_df_to_table(
-            df, table_name, if_exists='append'
-        ) 
+        zip_package = zip( df['name'].unique().tolist(), df['table_id'].unique().tolist() )
+        
+        tables = {}
+        for key, id in zip_package if production else zip( manual_key, test_table_id ):
+            fetch_df = self.get_df_from_table_id( new_table_id = id )
 
-    def send_report_to_bigquery(self, df ):
-        self.BigQuery.df_to_bq( df, 'Lark', 'Table_Izzo', new=False )
+            if fetch_df.empty:
+                df = pd.DataFrame()
+                pass
 
-    def full_lark_to_bq( self ):
-        ...   
+            if not production:
+                fetch_df.to_csv( f"raw_{key.lower().replace(' ', '_')}_table.csv", index=False )
+
+            if key == 'Employee Table':
+                fetch_df = self.clean_employee_table( fetch_df )
+            elif key == 'Salary Table':
+                fetch_df = self.clean_salary_table( fetch_df )
+            else:
+                print( f'{key}: not assigned post clean' )
+            
+            tables[key] = fetch_df
+
+            if production:
+                try:
+                    # this is stage data, so we dont sell to bq, preserved for agg
+                    # self.BigQuery.df_to_bq( df, 'Lark', clean_name, new=False )                    
+                    
+                    clean_name = key.lower().replace(' ', '_')
+                    self.runner.mysql.load_df_to_table(
+                        df, clean_name, if_exists='append'
+                        ) 
+                
+                except Exception as e:
+                    print(e)
+                    pass
+            else:
+                fetch_df.to_csv( f"mysql_{clean_name}_table.csv", index=False )
+
+class DB_CRM:
+    def __init__(self):
+        self.runner = LarkPipelines()
+
+    def get_table_from_db( self, bigquery = True ):
+        #- pulling data from report always agg-level, so from bq
+        #if not bigquery:
+        #    self.mysql.execute_statement( 'call stored_procedure();' )
+        #    self.mysql.query_to_df( 'select * from Post_Table;')
+
+        if bigquery:
+            self.runner.BigQuery.push_query( 'call example.stored_procedure();' )
+            df = self.runner.BigQuery.query_to_dataframe( 'select * from Lark.Post_Table;' )
+
+        return df 
+
+    def create_record_to_lark( self, appendix : pd.DataFrame, target_table = None, test_df = True ):
+        if target_table is None:
+            target_table =  'Post table'
+
+        check_table_exists = [ c for c in appendix['name'].tolist() if target_table in c ]
+        if not check_table_exists:
+            raise ValueError(f'{target_table} not found.')
+        
+        mask = df['name'] == target_table 
+        df = df.loc[mask]
+
+        table_id = df['table_id'].tolist()[0]
+
+        if test_df:
+            test_data = { 'Text' : [ 'izzo' ], 'Record ID' : [ '' ] , 'Date' : [ '2001/06/27'] }
+            test_data['Date'] = pd.to_datetime( test_data['Date'] )
+            insert_data = pd.DataFrame( test_data )
+
+        if not test_df:
+            insert_data = self.get_table_from_db( bigquery=False )
+
+        self.runner.Lark.CreateRecords( insert_data , table_id)
+
+    def full_db_to_lark( self ):
+        appendix = self.runner.lark_get_table_list()
+
+        if not appendix:
+            print( 'no name in appendix found, force create table')
+            
+            new_name = 'new table coz the targer dont exist'
+            
+            self.Lark.CreateBatchTable( new_name )
+            appendix['name'] = new_name
+
+        self.create_record_to_lark( appendix, new_name, False  )
 
     def update_report_in_lark( self ):
         """
@@ -155,7 +240,3 @@ class LarkPipelines:
         except Exception as e:
             print( e )
             pass
-
-    def main( self ):
-        self.full_lark_to_bq()
-        self.full_bq_to_lark()
