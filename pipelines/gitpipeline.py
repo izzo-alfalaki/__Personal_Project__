@@ -54,6 +54,8 @@ class ETL:
             lambda x : x[0].get( 'duration_ms') if x[0] else None
             )
 
+        df = df.drop( columns = 'billable.UBUNTU.job_runs')
+
         return df
 
     def clean_all( self, dx : pd.DataFrame , dy : pd.DataFrame ):
@@ -74,6 +76,7 @@ class ETL:
             report = report.rename( columns = { 'billable.UBUNTU.jobs' : 'assigned_job_count'} )
 
             #report.to_parquet( 'actionrun_apipull.parquet' )        
+            return report
 
     def get_workflow_timing(self ) -> pd.DataFrame:
         res  = self.runner.Git.get_runner_list()
@@ -122,7 +125,9 @@ class ETL:
         #self.runner.BigQuery.df_to_bq( report, 'Git', 'Actions', new=False )
 
         df = self.get_workflow_timing()
-        self.runner.mysql.load_df_to_table( df , self.runner.report_name , if_exists='append' )
+        
+        if df is None or not df.empty:
+            self.runner.mysql.load_df_to_table( df , self.runner.report_name , if_exists='replace' )
 
 class PostETL:
     """
