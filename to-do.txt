@@ -8,3 +8,13 @@
 2 - study lark-data
 
 3 - shopee apipull workflow
+
+
+arrraying string list to listtype / arraytyp
+"""
+select 
+ json_extract_string_array(
+  safe.parse_json( 
+    replace( qualified_position, "'", '"' )
+  )) from Lark.Salary;
+"""

@@ -33,5 +33,33 @@ def main():
     df = pd.json_normalize( res )
     print(df)
 
+from common.connection.larkclient import LarkClient
+from common.utility.larkutillitysdk import LarkSDK
+from config.lark_report_table import *
+import ast
+
+def main():
+    run = LarkSDK( client=LarkClient, app_token = BASE_TOKEN, report= EMPLOYEE )
+             
+    # test - ignore at production
+    x = run.ListTables()
+    print( x )
+    appendix = pd.json_normalize( x )
+    print( appendix )
+
+    name = 'PyIzzo'
+    res = run.CreateBatchTable( name )
+
+    if isinstance(  res , dict):
+        pass
+    else:
+        ast.literal_eval( res )
+
+    aidee = res.get('table_ids')
+    aidee = aidee[0] if isinstance( aidee, list) and len( aidee ) <= 1 else aidee
+
+    appendix.loc[ len( appendix )] = { "table_id": aidee, "name": name }
+    print( appendix )
+
 if __name__ == '__main__':
     main()

@@ -187,36 +187,27 @@ class PostETL:
                 if df.empty:
                     raise ValueError( 'df is Empty' )            
 
-                self.runner.BigQuery.df_to_bq( df, 'Lark', x.title().split('_')[0])
+                self.runner.BigQuery.df_to_bq( df, 'Lark', x.title().split('_')[0], new = True)
 
             except Exception as e:
                 print( f'decide the stage error: {e}' )
                 pass
 
-    def get_table_from_db( self, bigquery = True ):
+    def get_table_from_db( self ):
         #- pulling data from report always agg-level, so from bq
         #if not bigquery:
         #    self.mysql.execute_statement( 'call stored_procedure();' )
         #    self.mysql.query_to_df( 'select * from Post_Table;')
 
-        if bigquery:
-            self.runner.BigQuery.push_query( 'call example.stored_procedure();' )
-            df = self.runner.BigQuery.query_to_dataframe( 'select * from Lark.EmployeeModel;' )
+        self.runner.BigQuery.push_query( 'call example.stored_procedure();' )
+        df = self.runner.BigQuery.query_to_dataframe( 'select * from Lark_table.modeled_employee;' )
 
         return df 
 
-    def create_record_to_lark( self, appendix : pd.DataFrame, target_table = None, test_df = True ):
-        if target_table is None:
-            target_table =  'Post table'
-
-        check_table_exists = [ c for c in appendix['name'].tolist() if target_table in c ]
-        if not check_table_exists:
-            raise ValueError(f'{target_table} not found.')
-        
-        mask = df['name'] == target_table 
-        df = df.loc[mask]
-
-        table_id = df['table_id'].tolist()[0]
+    def create_record_to_lark( self, appendix : pd.DataFrame, target_table : str, test_df = True ):        
+        mask = appendix['name'] == target_table 
+        appendix = appendix.loc[mask]
+        table_id = appendix['table_id'].tolist()[0]
 
         if test_df:
             test_data = { 'Text' : [ 'izzo' ], 'Record ID' : [ '' ] , 'Date' : [ '2001/06/27'] }
@@ -224,34 +215,44 @@ class PostETL:
             insert_data = pd.DataFrame( test_data )
 
         if not test_df:
-            insert_data = self.get_table_from_db( bigquery=False )
+            insert_data = self.get_table_from_db()
 
         self.runner.Lark.CreateRecords( insert_data , table_id)
 
-    def full_db_to_lark( self ):
+    def full_db_to_lark( self , target_table : str ):
         appendix = self.runner.lark_get_table_list()
+        new_name = 'new table coz the targer dont exist'
 
+        check_table_exists = [ val for val in appendix['name'].tolist() if target_table in val ]
         if not appendix:
+            print( 'WARNING: appendix retuurn [], force create table')
+        elif not check_table_exists:     
             print( 'no name in appendix found, force create table')
-            
-            new_name = 'new table coz the targer dont exist'
-            
-            self.Lark.CreateBatchTable( new_name )
-            appendix['name'] = new_name
+                
+            res = self.runner.Lark.CreateBatchTable( new_name )
+            if isinstance( res , dict):
+                pass
+            else:
+                ast.literal_eval( res )
+
+            aidee = res.get('table_ids')
+            aidee = aidee[0] if isinstance( aidee, list) and len( aidee ) <= 1 else aidee
+
+            appendix.loc[ len( appendix )] = { "table_id": aidee, "name": new_name }
 
         self.create_record_to_lark( appendix, new_name, False  )
 
     def update_report_in_lark( self ):
         """
         even better idea maybe 
-         NOT TO USE: query.to_dataframe -> stimulate -> update, 
+         NOT TO USE: query.to_dataframe -> stimulate -> update (* IF ERROR), 
          
         but maybe use:
          SEARCH_RECORDS -> STIMULATE JSON / RESPONSE -> RESEND ( RE-SEND AS UPDATE RECORD )
         """
         # update table first
-        strsql = self.BigQuery.get_procedure( 'lark', ['lark_table'] )
-        self.BigQuery.push_query( strsql )
+        strsql = self.runner.BigQuery.get_procedure( 'lark', ['lark_table'] )
+        self.runner.BigQuery.push_query( strsql )
 
         # get record from bq
         query = """
@@ -263,7 +264,7 @@ class PostETL:
          ...          
         from Lark.Table_Izzo_failappend;"""
 
-        df = self.BigQuery.query_to_dataframe( query )
+        df = self.runner.BigQuery.query_to_dataframe( query )
         record_id = df['record_id'].tolist()
 
         ## -- example stimulation
@@ -271,7 +272,7 @@ class PostETL:
         df_edit['name'] = df_edit['name'].str.upper()  
         try:
             df_edit = df_edit.loc[ df_edit['record_id'] == record_id[0] ]
-            self.Lark.UpdateRecordData( df_edit, record_id[0] )
+            self.runner.Lark.UpdateRecordData( df_edit, record_id[0] )
         except Exception as e:
             print( e )
             pass
