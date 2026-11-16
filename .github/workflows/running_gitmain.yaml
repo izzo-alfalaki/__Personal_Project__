@@ -22,8 +22,14 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Get Git Kit / Token / Header for Requests
+        shell: python
         run: |
-          echo '${{ secrets.GITHUB }}' > config/git.json
+          import json
+          import os
+          os.makedirs('config', exist_ok=True)
+          secret_data = """${{ secrets.GITHUB }}"""
+          with open('config/git.json', 'w', encoding='utf-8') as f:
+              f.write(secret_data)
 
       - name: Connection Kit to localhost MySQL Database
         run: |
