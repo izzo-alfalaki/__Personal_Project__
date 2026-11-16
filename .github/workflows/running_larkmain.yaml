@@ -23,19 +23,19 @@ jobs:
 
       - name: Get Lark Kit / Token / Header larkoapi
         run: |
-          echo '${{ secrets.lark }}' > lark.json
+          echo '${{ secrets.lark }}' > config/lark.json
 
       - name: Get Lark Report Table ID
         run: |
-          echo '${{ secrets.larktable }}' > lark_report_tables.json
+          echo '${{ secrets.larktable }}' > config/lark_report_tables.json
 
       - name: Connection Kit to localhost MySQL Database
         run: |
-          echo '${{ secrets.mysql }}' > mysql.json
+          echo '${{ secrets.mysql }}' > config/mysql.json
 
       - name: Get Service Account for MySQL -> BigQuery
         run: |
-          echo '${{ secrets.izzo }}' > izzo.json
+          echo '${{ secrets.izzo }}' > config/izzo.json
 
       - name: commit full workflow
         run: python -m main.larkmain
