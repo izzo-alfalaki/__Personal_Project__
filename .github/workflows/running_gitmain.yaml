@@ -23,15 +23,15 @@ jobs:
 
       - name: Get Git Kit / Token / Header for Requests
         run: |
-          echo '${{ secrets.github }}' > config/git.json
+          echo '${{ secrets.GITHUB }}' > config/git.json
 
       - name: Connection Kit to localhost MySQL Database
         run: |
-          echo '${{ secrets.mysql }}' > config/mysql.json
+          echo '${{ secrets.MYSQL }}' > config/mysql.json
 
       - name: Get Service Account for MySQL -> BigQuery
         run: |
-          echo '${{ secrets.izzo }}' > config/izzo.json
+          echo '${{ secrets.IZZO }}' > config/izzo.json
 
       - name: commit full workflow
         run: python -m main.gitmain
