@@ -61,5 +61,61 @@ def main():
     appendix.loc[ len( appendix )] = { "table_id": aidee, "name": name }
     print( appendix )
 
+import random
+import string
+
+def main() -> pd.DataFrame : 
+    """
+    Before hand, I create an appendix, in order to make sure generated data can be seem :
+    structured and relational **while at the same time** varies within 
+    (1) date, (2) transaction_id, and any else.
+    """
+    all = { 
+        "res" : []
+    }
+
+    smoother = 0.01
+    for i in range( 1, 201 ):
+        scheme = {}
+        
+        names = []
+        for _ in range(1, random.randint( 3, 5 ) ):
+            names.append(random.choice( string.ascii_letters))
+
+        scheme_name = ''.join( names ).upper()
+
+        scheme["id"] = i
+
+        if i <= 30:
+            scheme['category'] = "Sports"
+            scheme['price'] = random.randint( 20, 100) - smoother 
+        elif i > 30 and i <= 50:
+            scheme['category'] = "Medical"
+            scheme['price'] = random.randint( 70, 300) - smoother
+        elif i > 50 and i <= 70:
+            scheme['category'] = "Education"
+            scheme['price'] = random.randint( 1, 30) - smoother
+        elif i > 70 and i <= 120:
+            scheme['category'] = "Bedrooms & Design"
+            scheme['price'] = random.randint( 79, 700) - smoother
+        elif i > 120 and i <= 160:
+            scheme['category'] = "Kitchen & Cooks"
+            scheme['price'] = random.randint( 20, 200) - smoother
+        elif i > 160 and i <= 180:
+            scheme['category'] = "Toilets & Laundry"
+            scheme['price'] = random.randint( 10, 50) - smoother
+        else:
+            scheme['category'] = "Others"
+            scheme['price'] = random.randint( 1, 10) - smoother
+
+        scheme['name'] = scheme['category'].replace('&', '').replace(' ', '_').upper() + '-' + scheme_name + str( i )
+
+        all['res'].append( scheme )
+
+    #print( all )
+    df = pd.DataFrame( all['res'] )
+    print( df )
+    return df
+
 if __name__ == '__main__':
     main()

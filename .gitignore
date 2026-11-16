@@ -38,6 +38,7 @@ config/lark_report_tables.json
 # ==========================================
 *.log
 *.csv
+dump-gen/
 
 # ==========================================
 # Personal Notes & Documentation Drafts

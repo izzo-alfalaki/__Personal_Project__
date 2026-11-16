@@ -91,9 +91,10 @@ class ETL:
         if res is None:
             return pd.DataFrame()
 
-        import json
-        with open("inspect.json", "w", encoding="utf-8") as f:       
-            json.dump(res, f, indent=4)
+        # for local test
+        # import json
+        # with open("inspect.json", "w", encoding="utf-8") as f:       
+        #     json.dump(res, f, indent=4)
         
         initdf = pd.json_normalize( res )
         print(f'PRE: checking extract reponse: {len(initdf)}')

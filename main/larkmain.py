@@ -1,4 +1,4 @@
-from pipelines.larkpipelines import ETL, PostETL
+from pipelines.larkpipeline import ETL, PostETL
 
 if __name__ == '__main__':
     ETL().full_lark_to_db()
