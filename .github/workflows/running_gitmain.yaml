@@ -1,0 +1,37 @@
+name: GitActions - ETL only
+
+on:
+  schedule:
+    - cron: '30 6 * * 1,2'
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Get Git Kit / Token / Header for Requests
+        run: |
+          echo '${{ secrets.github }}' > git.json
+
+      - name: Connection Kit to localhost MySQL Database
+        run: |
+          echo '${{ secrets.mysql }}' > mysql.json
+
+      - name: Get Service Account for MySQL -> BigQuery
+        run: |
+          echo '${{ secrets.izzo }}' > izzo.json
+
+      - name: commit full workflow
+        run: python -m main.gitmain
