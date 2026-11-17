@@ -71,8 +71,7 @@ class ETL:
             for c in datecol:
                 report[c] = pd.to_datetime(report[c], utc=True).dt.tz_convert("Asia/Kuala_Lumpur")
             
-            report['run_duration_ms'] = np.where( report['run_duration_ms'] > 0, report['run_duration_ms'] / 60000, report['run_duration_ms'] ) 
-            report['retrived_date'] = pd.Timestamp.now().strftime( '%Y-%m-%d %H:%M:%S' ) 
+            report['run_duration_ms'] = np.where( report['run_duration_ms'] > 0, report['run_duration_ms'] / 60000, report['run_duration_ms'] )  
             report = report.rename( columns = { 'billable.UBUNTU.jobs' : 'assigned_job_count'} )
 
             #report.to_parquet( 'actionrun_apipull.parquet' )        

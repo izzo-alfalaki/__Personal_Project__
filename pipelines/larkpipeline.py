@@ -144,9 +144,7 @@ class ETL:
             if production:
                 try:
                     # this is stage data, so we dont sell to bq, preserved for agg
-                    # self.BigQuery.df_to_bq( df, 'Lark', clean_name, new=False )                    
-                    
-                    fetch_df[ 'unique_timestamp' ] = str(pd.Timestamp.now()) 
+                    # self.BigQuery.df_to_bq( df, 'Lark', clean_name, new=False )                     
 
                     clean_name = key.lower().replace(' ', '_')
                     self.runner.mysql.load_df_to_table(

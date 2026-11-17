@@ -33,7 +33,12 @@ class MySQL:
         return df
 
     def load_df_to_table( self, df: pd.DataFrame, table_name: str, if_exists: str = "append" ) -> None:
+        """
+        ### Auto Create - df['Uique_Timestamp'] = str(pd.Timestamp.now()) 
+        ### **Purpose to create a unique records for batch update**
+        """
         df = self.clean_table(df)
+        df[ 'unique_timestamp' ] = str(pd.Timestamp.now())
 
         with self.engine.begin() as connection:
             df.to_sql(
