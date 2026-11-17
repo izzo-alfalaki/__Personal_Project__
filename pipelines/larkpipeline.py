@@ -98,6 +98,10 @@ class ETL:
         #     json.dump(res, f, indent=4)
         
         initdf = pd.json_normalize( res )
+
+        if initdf.empty  or len( initdf ) <= 1:
+            return pd.DataFrame()
+        
         print(f'PRE: checking extract reponse: {len(initdf)}')
 
         df = self.general_standard_clean(initdf)
@@ -123,8 +127,7 @@ class ETL:
             fetch_df = self.get_df_from_table_id( new_table_id = id )
 
             if fetch_df.empty:
-                df = pd.DataFrame()
-                pass
+                continue
 
             if not production:
                 fetch_df.to_csv( f"raw_{key.lower().replace(' ', '_')}_table.csv", index=False )
