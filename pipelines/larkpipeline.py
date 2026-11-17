@@ -65,7 +65,7 @@ class ETL:
             ]
 
         for c in num_cols_need_clean:
-            #df[c] = df[c].apply(lambda x: x[0] if not isinstance(x, [ float , int]) and len(x) > 0 else x)
+            #df[c] = df[c].apply(lambda x: x[0] if not isinstance(x, [ float | int]) and len(x) > 0 else x)
             df[c] = df[c].apply(lambda x: x if isinstance( x , float) or isinstance( x, int) or isinstance( x, str) else x[0])
             df[c] = pd.to_numeric( df[c], errors = 'coerce')
             df[c] = df[c].fillna(0)
@@ -222,12 +222,13 @@ class PostETL:
         self.runner.Lark.CreateRecords( insert_data , table_id)
 
     def full_db_to_lark( self , target_table : str ):
-        appendix = self.runner.lark_get_table_list()
-        new_name = 'new table coz the targer dont exist'
+        df_appendix = self.runner.lark_get_table_list()
+        appendix = df_appendix['name'].tolist()
+        new_name = target_table
 
-        check_table_exists = [ val for val in appendix['name'].tolist() if target_table in val ]
-        if not appendix:
-            print( 'WARNING: appendix retuurn [], force create table')
+        check_table_exists = [ val for val in appendix if target_table in val ]
+        if df_appendix.empty:
+            print( 'WARNING: appendix retuurn pd.DataFrame(), force create table')
         elif not check_table_exists:     
             print( 'no name in appendix found, force create table')
                 
@@ -240,9 +241,9 @@ class PostETL:
             aidee = res.get('table_ids')
             aidee = aidee[0] if isinstance( aidee, list) and len( aidee ) <= 1 else aidee
 
-            appendix.loc[ len( appendix )] = { "table_id": aidee, "name": new_name }
+            df_appendix.loc[ len( df_appendix )] = { "table_id": aidee, "name": new_name }
 
-        self.create_record_to_lark( appendix, new_name, False  )
+        self.create_record_to_lark( df_appendix, new_name, False  )
 
     def update_report_in_lark( self ):
         """
