@@ -148,7 +148,7 @@ class ETL:
 
                     clean_name = key.lower().replace(' ', '_')
                     self.runner.mysql.load_df_to_table(
-                        fetch_df, clean_name, if_exists='replace'
+                        fetch_df, clean_name, if_exists='append'
                         ) 
                 
                 except Exception as e:

@@ -126,7 +126,7 @@ class ETL:
         df = self.get_workflow_timing()
         
         if df is None or not df.empty:
-            self.runner.mysql.load_df_to_table( df , self.runner.report_name , if_exists='replace' )
+            self.runner.mysql.load_df_to_table( df , self.runner.report_name , if_exists='append' )
 
 class PostETL:
     """
