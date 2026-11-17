@@ -51,28 +51,28 @@ def GenSchema() -> pd.DataFrame :
         scheme["id"] = i
     
         if i <= 30:
-            scheme['category'] = "Sports"
+            scheme['category'] = "Category A"
             scheme['price'] = random.randint( 20, 100) - smoother 
         elif i > 30 and i <= 50:
-            scheme['category'] = "Medical"
+            scheme['category'] = "Category B"
             scheme['price'] = random.randint( 70, 300) - smoother
         elif i > 50 and i <= 70:
-            scheme['category'] = "Education"
+            scheme['category'] = "Category C"
             scheme['price'] = random.randint( 1, 30) - smoother
         elif i > 70 and i <= 120:
-            scheme['category'] = "Bedrooms & Design"
+            scheme['category'] = "Category D"
             scheme['price'] = random.randint( 79, 700) - smoother
         elif i > 120 and i <= 160:
-            scheme['category'] = "Kitchen & Cooks"
+            scheme['category'] = "Category E"
             scheme['price'] = random.randint( 20, 200) - smoother
         elif i > 160 and i <= 180:
-            scheme['category'] = "Toilets & Laundry"
+            scheme['category'] = "Category F"
             scheme['price'] = random.randint( 10, 50) - smoother
         else:
-            scheme['category'] = "Others"
+            scheme['category'] = "Category E"
             scheme['price'] = random.randint( 1, 10) - smoother
     
-        scheme['name'] = scheme['category'].replace('&', '').replace(' ', '_').upper() + '-' + scheme_name + str( i )
+        scheme['name'] = scheme['category'].replace(' ', '_').upper() + '-' + scheme_name + str( i )
     
         all['res'].append( scheme )
     

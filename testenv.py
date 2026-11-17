@@ -136,5 +136,10 @@ def main():
     client = GcpClient().bq_client() 
     client.query( 'select 1;' )
 
+from pipelines.genpipeline import *
+def main():
+    all_data = ETL().append_all_data()
+    print( all_data )
+
 if __name__ == '__main__':
     main()

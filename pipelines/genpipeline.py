@@ -1,23 +1,28 @@
 from common.utility.genutility import *
 
-def generate_data_all():
-    dt_contant = int(gen_date())
-    schema = GenSchema()
+schema = GenSchema()
+class ETL:
+    def __init__(self):
+        self.schema = schema
     
-    return_list, purchase_list =\
-    GenerateWorkingTools().generate_item()
-    
-    dependant_list =\
-    WorkingList( schema, return_list, purchase_list )
+    def generate_body( self ) -> dict:
+        dt_contant = int(gen_date())
+        
+        return_list, purchase_list =\
+        GenerateWorkingTools().generate_item()
+        
+        dependant_list =\
+        WorkingList( self.schema, return_list, purchase_list )
 
-    false_price, price,\
-    false_quant, quant,\
-    total, member_id =\
-    dependant_list.get_all()
-    
-    trid = f'{dt_contant}{str(''.join(purchase_list))}{member_id}'
+        false_price, price,\
+        false_quant, quant,\
+        total, member_id =\
+        dependant_list.get_all()
 
-    return\
+        uniqitem = [ str(c) for c in purchase_list  ]
+        trid = f'{dt_contant}{''.join(uniqitem)}{member_id}'
+
+        return\
 {
  "transaction_id" : trid,
  "response" : { 
@@ -35,25 +40,40 @@ def generate_data_all():
                }
 }
 
-if __name__ == '__main__':
-    cap = 276 
-    chunk = 0
-    while chunk <= cap:
+    def dump_all_data(self) -> json.dump:
+        cap = 276 
+        chunk = 0
+        while chunk <= cap:
+            data = {
+                "res" : []
+            }
+            for _ in range( 1, ( 649 + 1 )):
+                x = self.generate_body()
+                data['res'].append( x )
+            print( len( data['res'] ) )
+
+            if os.path.exists( 'dump-gen' ):
+                with open( f'dump-gen/datalog{chunk}.json', 'w' ) as file:
+                    json.dump( data, file, indent = 4)
+                print( 'write-complete')           
+
+            chunk += 1
+
+            if chunk > cap:
+                break
+
+    def append_all_data(self) -> json.dump:
         data = {
-            "res" : []
-        }
-        for i in range( 1, ( 649 + 1 )):
-            x = generate_data_all()
+                "res" : []
+            }
+        
+        for _ in range( 1, ( 180000 )):
+            x = self.generate_body()
             data['res'].append( x )
-        print( len( data['res'] ) )
+            
+            print( len( data['res'] ) )
 
-        if os.path.exists( 'dump-gen' ):
-            with open( f'dump-gen/datalog{chunk}.json', 'w' ) as file:
-                json.dump( data, file, indent = 4)
+        with open( 'dump-gen/all_append.json', 'w') as f:
+            json.dump( data, f, indent=4)
 
-            print( 'write-complete')
-
-        chunk += 1
-
-        if chunk > cap:
-            break
+        return data    
