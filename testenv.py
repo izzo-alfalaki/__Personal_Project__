@@ -117,5 +117,18 @@ def main() -> pd.DataFrame :
     print( df )
     return df
 
+def main():
+    import json
+    import os
+    os.makedirs('config', exist_ok=True)
+          
+    secrets_data = [  """${{ secrets.GITHUB }}""", """${{ secrets.LARK }}""", """${{ secrets.LARKTABLE }}""", """${{ secrets.MYSQL }}""", """${{ secrets.IZZO }}""" ]
+    secrets_key = [ 'config/git.json', 'config/lark.json', 'config/lark_report_tables.json', 'config/mysql.json', 'config/izzo.json' ]
+    secrets_key = [ 'git.json', 'lark.json', 'lark_report_tables.json', 'mysql.json', 'izzo.json' ] # sandbox
+          
+    for data, key in zip( secrets_data, secrets_key ):
+        with open(key, 'w', encoding='utf-8') as f:
+            f.write(data)
+
 if __name__ == '__main__':
     main()
