@@ -130,5 +130,11 @@ def main():
         with open(key, 'w', encoding='utf-8') as f:
             f.write(data)
 
+def main():
+    from common.connection.gcpclient import GcpClient
+
+    client = GcpClient().bq_client() 
+    client.query( 'select 1;' )
+
 if __name__ == '__main__':
     main()

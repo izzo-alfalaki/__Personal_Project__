@@ -65,7 +65,7 @@ class ETL:
             ]
 
         for c in num_cols_need_clean:
-            df[c] = df[c].apply(lambda x: x[0] if x[0] and len(x) > 0 else '0')
+            df[c] = df[c].apply(lambda x: x[0] if not isinstance(x, [ float , int]) and len(x) > 0 else x)
             df[c] = pd.to_numeric( df[c], errors = 'coerce')
             df[c] = df[c].fillna(0)
 
