@@ -32,11 +32,19 @@ class GcpClient:
         jsonpath = 'izzo.json'
         self.json_key = get_path( jsonpath )
         
+        serialjsonpath = 'izzo_serial.json'
+        self.serrial_jsonkey = get_path( serialjsonpath)
+        
         jsonload = get_json( jsonpath )
         self.project_id = jsonload.get( 'project_id', None )
         
     def get_credits( self ):
-        return Credentials.from_service_account_file(self.json_key, scopes=role)
+        try:
+            credientals = Credentials.from_service_account_file( self.serrial_jsonkey, scopes=role)
+        except:
+            credientals = Credentials.from_service_account_file( self.json_key, scopes=role)
+
+        return credientals
 
     def bq_client( self ):        
         credits = self.get_credits()

@@ -7,6 +7,12 @@ ENV/
 .vscode/
 .idea/
 .env
+
+# ==========================================
+# Personal Files
+# ==========================================
+@MeTools/
+
 # ==========================================
 # Python Bytecode & Cache
 # ==========================================
@@ -14,36 +20,16 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-framework_copy.py
 
 # ==========================================
 # Secrets & Private Configurations
 # ==========================================
-# Secret Python config files (anywhere in repo)
-**/VALUES_SHOPEE.py
-
-# Secret JSON files matching your naming pattern
 **/SOURCES_*.json
 **/service_acc*.json
 
-# Safety catch for root/config raw secret files
 config/izzo.json
+config/izzo_serial.json
 config/git.json
 config/lark.json
 config/mysql.json
 config/lark_report_tables.json
-
-# ==========================================
-# Logs & Scheduler Outputs
-# ==========================================
-*.log
-*.csv
-dump-gen/
-
-# ==========================================
-# Personal Notes & Documentation Drafts
-# ==========================================
-md_fromat.md
-essentials/repo_struct.txt
-essentials/repo.md
-essentials/repo.txt

@@ -35,13 +35,19 @@ class ETL:
         self.runner = LarkPipelines()
 
     def general_standard_clean( self, df : pd.DataFrame ) -> pd.DataFrame:
-        minus = df.select_dtypes(include= [ 'float', 'int', 'str'] ).columns.tolist()
+        minus = df.select_dtypes(include=["number", "object"]).columns.tolist()
         for c in [ c for c in df.columns.tolist() if c not in minus ]:
-            df[c] = df[c].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
-        
+            try:
+                df[c] = df[c].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+            except Exception as e:
+                print( e )
+                pass
+
+        for c in [ c for c in df.columns.tolist() ]:
             try:          
                 df[c] = df[c].apply( lambda x: x[0]['text'] if x[0]['text'] else x )
-            except:
+            except Exception as e:
+                print( e )
                 pass
             
         for c in [c for c in df.columns if 'date' in c.lower()]:
@@ -109,7 +115,30 @@ class ETL:
 
         return df
 
-    def full_lark_to_db( self, production : bool = True ):
+    def load_to_mysql(self, df : pd.DataFrame, name : str  ):
+        """
+        pulled from API, so raw data, for mysql
+        """
+        #self.runner.BigQuery.df_to_bq( report, 'Git', 'Actions', new=False )
+
+        if df is None or df.empty:
+            print( 'null df, empty df at stage Upload to MySQL' )
+            return None
+        
+        try:
+            self.runner.mysql.load_df_to_table( df , name , if_exists='append' )
+        except:
+            for c in df.columns:
+                df[c] = df[c].astype( str )
+
+            try:
+                new_name = f"{ name }_failed_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}"
+                self.runner.mysql.load_df_to_table( df , new_name , if_exists='replace' )
+            except Exception as e:
+                print( e )
+                pass
+
+    def etl( self, production : bool = True ):
         df = self.runner.lark_get_table_list()
         if df.empty:
             raise ValueError('No tables found in LarkBase.')
@@ -118,7 +147,7 @@ class ETL:
             df.to_csv( 'list_of_tables.csv', index=False )
 
         manual_key = [ 'Employee Table', 'Salary Table' ]
-        test_table_id = [ df['table_id'].tolist()[0], df['table_id'].tolist()[1]]
+        test_table_id = [ df['table_id'].tolist()[0], df['table_id'].tolist()[2]]
     
         zip_package = zip( df['name'].unique().tolist(), df['table_id'].unique().tolist() )
         
@@ -142,20 +171,13 @@ class ETL:
             tables[key] = fetch_df
 
             if production:
-                try:
-                    # this is stage data, so we dont sell to bq, preserved for agg
-                    # self.BigQuery.df_to_bq( df, 'Lark', clean_name, new=False )                     
-
-                    clean_name = key.lower().replace(' ', '_')
-                    self.runner.mysql.load_df_to_table(
-                        fetch_df, clean_name, if_exists='append'
-                        ) 
-                
-                except Exception as e:
-                    print(e)
-                    pass
+                clean_name = key.lower().replace(' ', '_')
+                self.load_to_mysql( fetch_df, clean_name)
             else:
+                clean_name = key.lower().replace(' ', '_')
                 fetch_df.to_csv( f"mysql_{clean_name}_table.csv", index=False )
+
+        return tables
 
 class PostETL:
     def __init__(self):
@@ -180,20 +202,28 @@ class PostETL:
                 ) DESC ) = 1;
             """
             ]
-        
+
+        xcom_list = []
         for x, q in zip( [ 'employee_table', 'salary_table' ], ql ) :
             try:
                 df = self.runner.mysql.query_to_df( q )
         
                 if df is None:
-                    raise ValueError( 'df is NoneType' )
+                    print(f'skipping for : {x} - NoneType')
+                    xcom_list.append( f'fail {x}' )
+                    continue
                 if df.empty:
-                    raise ValueError( 'df is Empty' )            
+                    print(f'skipping for : {x} - pd.DataFrame')
+                    xcom_list.append( f'fail {x}' )
+                    continue            
 
                 self.runner.BigQuery.df_to_bq( df, 'Lark', x.title().split('_')[0], new = True)
 
+                xcom_list.append( x )
+
             except Exception as e:
                 print( f'decide the stage error: {e}' )
+                xcom_list.append( f'fail {x}')
                 pass
 
     def get_table_from_db( self ):

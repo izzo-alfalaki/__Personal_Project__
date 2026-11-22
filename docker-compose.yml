@@ -1,0 +1,64 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: local_mysql_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+    ports:
+      - "3306:3306"
+    volumes:
+      - personal_project___mysql_data:/var/lib/mysql
+    networks:
+      - pipeline-net
+
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    image: airflow-local-dev:latest
+    container_name: airflow_local_dev
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - MYSQL_HOST=mysql
+      - PYTHONPATH=/opt/airflow
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${DB_URL}
+    ports:
+      - "8080:8080"
+    volumes:
+      - C:/Users/dell/__Personal_Project__/dags:/opt/airflow/dags
+      - C:/Users/dell/__Personal_Project__/config:/opt/airflow/config
+      - C:/Users/dell/__Personal_Project__/pipelines:/opt/airflow/pipelines
+      - C:/Users/dell/__Personal_Project__/common:/opt/airflow/common
+      - C:/Users/dell/__Personal_Project__/main:/opt/airflow/main
+    command: standalone
+    networks:
+      - pipeline-net
+
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile.repo
+    image: izzo-pipeline
+    container_name: izzo_container
+    volumes:
+      - ./config:/app/config
+    depends_on:
+      - mysql
+    environment:
+      - MYSQL_HOST=mysql
+    networks:
+      - pipeline-net
+
+volumes:
+  personal_project___mysql_data:
+    external: true
+
+networks:
+  pipeline-net:
+    driver: bridge

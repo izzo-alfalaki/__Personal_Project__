@@ -38,7 +38,7 @@ class MysqlClient:
         config = self.load.get( user_package )
 
         self.user = config.get("MYSQL_USER", "root")
-        host = config.get("MYSQL_HOST", "localhost")
+        host = config.get("MYSQL_HOST", "mysql")
         port = config.get("MYSQL_PORT", "3306")        
         
         password = config.get("MYSQL_PASSWORD", None)
@@ -49,6 +49,15 @@ class MysqlClient:
         self.dbkey = config.get("MYSQL_DATABASE").get( database, 'not_found' )
         if database == 'not_found':
             raise KeyError( f'invalid database : {database}' )
+
+        with open( '.env' , 'w') as f:
+            f.write( f"""
+DB_ROOT_PASSWORD = "{config.get("MYSQL_PASSWORD", None)}"
+
+DB_NAME = "{self.dbkey}"
+
+DB_URL = "mysql+pymysql://{self.user}:{password}@{host}:{port}/airflow"
+            """)
 
         return  f"mysql+pymysql://{self.user}:{password}@{host}:{port}/{self.dbkey}"
 
@@ -61,3 +70,5 @@ class MysqlClient:
             )
         
         return mysql_engine
+
+MysqlClient().engine(  user_package = 'izzo', database = 'raw' )

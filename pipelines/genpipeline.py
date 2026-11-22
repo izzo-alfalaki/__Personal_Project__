@@ -1,9 +1,15 @@
+from common.connection.mysql import MysqlClient
+from common.utility.mysqlutility import MySQL
 from common.utility.genutility import *
 
-schema = GenSchema()
-class ETL:
+class Runner:
     def __init__(self):
-        self.schema = schema
+        self.schema = GenSchema()
+        self.mysql = MySQL( client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )) 
+
+class GenerateBody:
+    def __init__(self, runner ):
+        self.runner = runner or Runner()
     
     def generate_body( self ) -> dict:
         dt_contant = int(gen_date())
@@ -12,7 +18,7 @@ class ETL:
         GenerateWorkingTools().generate_item()
         
         dependant_list =\
-        WorkingList( self.schema, return_list, purchase_list )
+        WorkingList( self.runner.schema, return_list, purchase_list )
 
         false_price, price,\
         false_quant, quant,\
@@ -20,7 +26,7 @@ class ETL:
         dependant_list.get_all()
 
         uniqitem = [ str(c) for c in purchase_list  ]
-        trid = f'{dt_contant}{''.join(uniqitem)}{member_id}'
+        trid = f"{dt_contant}{''.join(uniqitem)}{member_id}"
 
         return\
 {
@@ -40,7 +46,7 @@ class ETL:
                }
 }
 
-    def dump_all_data(self) -> json.dump:
+    def dump_all_data(self, local : bool = False ) -> json.dump:
         cap = 276 
         chunk = 0
         while chunk <= cap:
@@ -52,23 +58,102 @@ class ETL:
                 data['res'].append( x )
             print( len( data['res'] ) )
 
-            if os.path.exists( 'dump-gen' ):
-                with open( f'dump-gen/datalog{chunk}.json', 'w' ) as file:
-                    json.dump( data, file, indent = 4)
-                print( 'write-complete')           
+            if local:
+                if os.path.exists( 'dump-gen' ):
+                    with open( f'dump-gen/datalog{chunk}.json', 'w' ) as file:
+                        json.dump( data, file, indent = 4)
+                    print( 'write-complete')
+
+            if not local:
+                return data           
 
             chunk += 1
 
             if chunk > cap:
                 break
 
+    def dump_all_data( self ) -> dict:
+        data = {
+            'res' : []
+        }
+
+        for _ in range( 1, ( 27 * 649) ):
+            data["res"].append( self.generate_body() ) 
+
+        return data
+
+class ETL:
+    def __init__(self, runner):
+        self.runner = runner or Runner()
+
+    def get_response( self, response : dict ) -> pd.DataFrame :
+        if response is None or not response:
+            print( 'response error : Expected dict but got Nonetype / or null dict ')
+            return pd.DataFrame()
+        
+        if response.get( 'res' ):
+            try:
+                data = response.get( 'res' )
+                return pd.json_normalize( data )
+
+            except Exception as e:
+                print( e )
+                return pd.DataFrame()
+
+    def clean_response( self, df : pd.DataFrame ) -> pd.DataFrame:
+        if df is None or df.empty:
+            return pd.DataFrame()
+
+        df = df.rename( columns= {                                 
+            "response.date" : "date",                             
+            "response.basket.confirmed_item.items" :  "confirmed_item",     
+            "response.basket.confirmed_item.quantity" : "confirmed_item_quantity",  
+            "response.basket.confirmed_item.price" : "confirmed_item_price",     
+            "response.basket.returned_item.items" : "returned_item",       
+            "response.basket.returned_item.quantity" : "returned_item_quantity",   
+            "response.basket.returned_item.price" : "returned_item_price",      
+            "response.total" : "total",                           
+            "response.membership_id" : "membership_id"                      
+        }) 
+        df = df.drop_duplicates( subset='transaction_id', ignore_index=False )
+
+        df['date'] = pd.to_datetime( df['date'], unit='s')
+        for c in [ 'transaction_id', 'membership_id' ]:
+            df[c] = df[c].astype( str )
+        
+        return df  
+    
+    def load_to_mysql( self, df : pd.DataFrame ) -> None :
+        if df.empty or df is None:
+            print( 'passed df for load_mysql is null, passing this stage instead' )
+            return 
+
+        try:
+            self.runner.mysql.load_df_to_table( df, 'transaction_data', if_exists='append')
+        except Exception as e:
+            print( f'mysql expereince error : {e}')
+            try:
+                new_name = f"transaction_data_fail_{pd.Timestamp.now().strftime( '%Y%m%d_%H%M%S' )}"
+                self.runner.mysql.load_df_to_table( df, new_name, if_exists='replace')
+            except Exception as er:
+                print( f'failure on new destinantion tables as well : {er} '  )
+                pass
+
+class NotUsed:
+    def __init__(self, body_generator : classmethod ):
+        if callable( body_generator):
+            self.body = body_generator
+
     def append_all_data(self) -> json.dump:
+        """
+        not for use now
+        """
         data = {
                 "res" : []
             }
         
         for _ in range( 1, ( 180000 )):
-            x = self.generate_body()
+            x = self.body()
             data['res'].append( x )
             
             print( len( data['res'] ) )

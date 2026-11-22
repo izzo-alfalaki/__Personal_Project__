@@ -1,0 +1,20 @@
+name: compose down mayynnnnnn
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  down:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Tear down Docker Compose stack
+        run: docker compose down
+
+      - name: Delete Esssentials Files
+        run: python -m start_kit.repo_close

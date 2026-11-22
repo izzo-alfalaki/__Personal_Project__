@@ -24,7 +24,7 @@ def GenSchema() -> pd.DataFrame :
     structured and relational **while at the same time** varies within 
     (1) date, (2) transaction_id, and any else.
     """
-    parent = 'dump-gen'
+    parent = 'config'
     sub = 'appendix.json'
     
     if os.path.exists( parent ):

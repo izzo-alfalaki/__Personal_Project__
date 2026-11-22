@@ -1,5 +1,7 @@
 from pipelines.larkpipeline import ETL, PostETL
 
 if __name__ == '__main__':
-    ETL().full_lark_to_db()
-    #PostETL().full_db_to_lark( target_table = 'Test Report' )
+    etl = ETL()
+    tables = etl.etl( production=True)
+    #etl = PostETL()
+    #etl.mysql_to_bq()
