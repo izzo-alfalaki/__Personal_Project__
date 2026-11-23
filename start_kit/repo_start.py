@@ -2,6 +2,7 @@ import os
 
 def writes_dags():
     startdir = 'start_kit'
+    os.makedirs( startdir, exist_ok=True)
     for f in [ c for c in os.listdir( startdir ) if c.endswith( '.md') and '-dag' in c]:
         with open( f'{startdir}/{f}', 'r') as read:
             x = read.read()
