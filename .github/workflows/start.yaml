@@ -30,4 +30,4 @@ jobs:
           USER_PATH: ${{ secrets.ENV_USER_PATH }}      
         run: |
           $path = $env:USER_PATH
-          docker compose --env-file "$path" up -d --build
+          docker compose --env-file "$path/.env" up -d --build
