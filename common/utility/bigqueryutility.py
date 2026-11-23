@@ -24,6 +24,7 @@ minimalist within syntax
 """
 
 import os
+import ast
 import pandas_gbq
 import pandas as pd
 from pathlib import Path
@@ -68,7 +69,7 @@ class BigQuery:
             credentials=self.credits  
             )
 
-    def df_to_bq( self, df , dataset, table, new= False ):
+    def df_to_bq( self, df : pd.DataFrame , dataset : str , table : str , new= False, list_exists : list = None ):
         """
         to_bq assigned for upload table, but df_to_bq, decide how to handle logic, 
         if new then append if not new then replace, and fallback, 
@@ -80,6 +81,15 @@ class BigQuery:
         we make room for adjustment while having data alreadt arrived in database, we can use sql stimulation
         to clean data and union all, while during that, we can handle python orchestrartion to re-parse df.   
         """
+        if list_exists:
+            for c in list_exists:
+                try:
+                    df[c] = df[c].apply( 
+                        lambda x : ast.literal_eval( x ) if x.startswith( '[') or x.startswith( '{') else x )
+                except Exception as e:
+                    print( e )
+                    pass
+
         df = self.std_cols(df)
         destination = f'{dataset}.{table}'
 

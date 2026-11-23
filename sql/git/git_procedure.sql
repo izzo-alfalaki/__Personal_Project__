@@ -1,8 +1,31 @@
-create or replace procedure Git.aggregate( N int64 )
+CREATE OR REPLACE PROCEDURE `izzo-472202.Git.aggregate`()
+begin
+CREATE OR REPLACE TABLE Git.GitActionsAgg as 
+select 
+ name, date(created_at) as `date`, repository_full_name, 
+ count(id) as dispatch_count,
+
+ max( run_number) as commulative_run_number,
+ sum( run_number) as sum_run_number,    
+ 
+ max( run_started_at ) as last_run, max( updated_at ) as last_update, 
+ avg( run_duration_ms ) as avg_minutes_consumption 
+  
+from Git.GitActions 
+
+group by 
+  name, date(created_at), repository_full_name;
+
+end;
+
+CREATE OR REPLACE PROCEDURE `i
+zzo-472202.Git.model`(N INT64)
 begin
 
 declare max_date date default ( 
-    select date( max( retrived_date ) ) from Git.Actions 
+    select date( max( 
+      cast( left( unique_timestamp, 19 ) as datetime) 
+      ) ) from Git.GitActions 
     );
 
 declare min_date date default 
@@ -15,7 +38,13 @@ create temp function lambda_case(field float64, treshold_field float64 ) as (
  else 0 end
 );
 
-create or replace table Git_table.ActionsAggregate as 
+create temp function lambda_date(field string ) as (
+ case when length( field ) > 19 then
+ cast( left( field, 19  ) as datetime)
+ else null end 
+);
+
+create or replace table Git.ActionsModel as 
 with a as(  
   
   select 
@@ -24,9 +53,9 @@ with a as(
     lambda_case( run_duration_ms, avg(run_duration_ms) over (partition by name)  ) below_average 
     
   from 
-    Git.Actions
+    Git.GitActions
   where
-    date(cast(retrived_date as datetime)) between min_date and max_date
+    lambda_date( unique_timestamp ) between min_date and max_date
   )
 
 select 

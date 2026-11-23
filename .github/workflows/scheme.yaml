@@ -1,4 +1,4 @@
-name: Compose Up
+name: Scheme
 
 on:
   workflow_dispatch:

@@ -19,15 +19,20 @@ from common.utility.larkutillitysdk import LarkSDK
 
 from config.lark_report_table import BASE_TOKEN as APP_TOKEN, GIT_REPORT
 
-class GitPipelines:
-    def __init__(self):
+class Runner:
+    def __init__(self, local : bool = False ):
         self.Git = GitRequest(GitClient().declare())
         self.Lark = LarkRequests( LarkClient().declare(), APP_TOKEN)
     
         gcp = GcpClient()
         self.BigQuery = BigQuery( gcp.bq_client(), gcp.get_credits(), gcp.project_id )
-        self.mysql = MySQL( client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' ))
-
+        
+        if not local:
+            client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )
+        if local:
+            client = MysqlClient().retry_engine(  user_package = 'izzo', database = 'raw' )
+        self.mysql = MySQL( client ) 
+        
         self.table_id = GIT_REPORT.get('TABLE_ID')
         self.report_name = 'git_actions'
 
@@ -37,8 +42,8 @@ class ETL:
                             ## ETL ##
     ###################################################################
     """    
-    def __init__(self):
-        self.runner = GitPipelines()
+    def __init__(self, runner) :
+        self.runner = runner or Runner()
 
     def inloop_clean(self, df : pd.DataFrame ):
         if df is None or df.empty:
@@ -181,24 +186,21 @@ class PostETL:
                         ## POST LOAD JOB ##
     ###################################################################
     """    
-    def __init__(self):
-        self.runner = GitPipelines()
+    def __init__(self, runner) :
+        self.runner = runner or Runner()
 
     def from_mysql( self ) -> pd.DataFrame:
         df = self.runner.mysql.query_to_df( 
                 f"""
                 with mxdt as (
-                  select max(date) as x from {self.runner.report_name} 
-                )
-
+                    select max(cast( left( unique_timestamp, 19 ) as datetime )) as x from git_actions  
+                    )
                 select 
-                  t.* 
-                
-                from {self.runner.report_name} t 
-                  cross join mxdt 
-                 
+                    t.*             
+                from 
+                    git_actions t cross join mxdt 
                 where 
-                  t.fetch_date between (mxdt.x - interval 7 day ) and mxdt.x;
+                    cast( left( t.unique_timestamp, 19 ) as datetime ) between (mxdt.x - interval 7 day ) and mxdt.x;
                 """
                 ) 
 
@@ -212,9 +214,32 @@ class PostETL:
             raise KeyError( 'to_bigquery stage cacth empty dataframe, there is error at gitpipelines.py/PostETL().from_mysql() ')
 
         try:    
-            self.runner.BigQuery.df_to_bq( df, 'Git', 'Actions_Report', False)
+            self.runner.BigQuery.df_to_bq( df, 'Git', 'GitActions', True)
+            return f'upload successfull'    
         except Exception as e: 
-            print( f'error to send to BigQuery : {e}')
+            return f'error to send to BigQuery : {e}'
+            
+    def push_procedure( self ) -> None:
+        query = [ 'call Git.aggregate();', 'call Git.model(7);' ]
+        
+        results = {}
+        for q in query:
+            try:
+                job = self.runner.BigQuery.client.query(q)
+                job.result()
+                results[q] = f"success:{job.job_id}" 
+            except Exception as e:
+                print(e)
+                results[q] =  str(e) 
+
+        return results
+
+#########################################################################################################################
+# -------------------------------------------- BREAK OF SIGNIFICANT METHOD -------------------------------------------- #
+#########################################################################################################################
+class CallProcedureSendToLark:
+    def __init__(self):
+        self.runner = GitPipelines()
 
     def push_procedure( self ) -> None:
         query = self.runner.BigQuery.get_procedure('git', ['git_procedure'])
@@ -253,11 +278,7 @@ class PostETL:
         finaldf = self.get_modeled_table()
 
         return finaldf
-
-#########################################################################################################################
-# -------------------------------------------- BREAK OF SIGNIFICANT METHOD -------------------------------------------- #
-#########################################################################################################################
-class PostETL_UsingSDK:
+class CallProcedureSendToLark_UsingSDK:
     def __init__(self):
         self.Git = GitRequest(GitClient().declare())
         self.Lark = LarkSDK( LarkClient(), APP_TOKEN, GIT_REPORT)

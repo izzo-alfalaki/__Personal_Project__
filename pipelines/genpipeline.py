@@ -1,11 +1,23 @@
+from common.connection.gcpclient import GcpClient
+from common.utility.bigqueryutility import BigQuery
+
 from common.connection.mysql import MysqlClient
 from common.utility.mysqlutility import MySQL
 from common.utility.genutility import *
 
 class Runner:
-    def __init__(self):
+    def __init__(self, local : bool = False ):
         self.schema = GenSchema()
-        self.mysql = MySQL( client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )) 
+        
+        if not local:
+            client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )
+        if local:
+            client = MysqlClient().retry_engine(  user_package = 'izzo', database = 'raw' )
+        self.mysql = MySQL( client ) 
+
+        self.bigquery = BigQuery( client = GcpClient().bq_client(), 
+                                  credits = GcpClient().get_credits(),
+                                  project_id= GcpClient().project_id )
 
 class GenerateBody:
     def __init__(self, runner ):
@@ -77,7 +89,7 @@ class GenerateBody:
             'res' : []
         }
 
-        for _ in range( 1, ( 27 * 649) ):
+        for _ in range( 1, ( 276 + 649) ):
             data["res"].append( self.generate_body() ) 
 
         return data
@@ -139,6 +151,93 @@ class ETL:
                 print( f'failure on new destinantion tables as well : {er} '  )
                 pass
 
+class PostETL:
+    """
+    ###################################################################
+                        ## POST LOAD JOB ##
+    ###################################################################
+    """    
+    def __init__(self, runner):
+            self.runner = runner or Runner()
+
+    def from_mysql( self ) -> pd.DataFrame:
+        df = self.runner.mysql.query_to_df( 
+                f"""
+                with a as (
+                select 
+                    *, ROW_NUMBER() over ( 
+                        PARTITION BY transaction_id ORDER BY `date` desc 
+                    ) as rn   
+                from transaction_data 
+                ) 
+                (
+                select * from a WHERE rn = 1 and 
+                (
+                    unique_timestamp BETWEEN 
+                        DATE_SUB( date( CURRENT_TIMESTAMP()), INTERVAL 7 DAY ) 
+                        and 
+                        date( CURRENT_TIMESTAMP() )
+                )
+                order by total desc  limit 2763
+                )                
+                union ALL
+                (
+                select * from a WHERE rn = 1 and 
+                (
+                    unique_timestamp BETWEEN 
+                        DATE_SUB( date( CURRENT_TIMESTAMP()), INTERVAL 7 DAY ) 
+                        and 
+                        date( CURRENT_TIMESTAMP() )
+                )
+                order by total asc  limit 649
+                );
+                """
+                ) 
+
+        if df.empty or df is None:
+            return pd.DataFrame()
+
+        return df
+
+    def to_bigquery( self, df: pd.DataFrame ):
+        if df is None or df.empty:
+            raise KeyError( 'to_bigquery stage cacth empty dataframe, there is error at genpipelines.py/PostETL().from_mysql() ')
+            #return None
+
+        list_cols = [ 'confirmed_item', 'confirmed_item_quantity', 'confirmed_item_price', 
+                      'returned_item', 'returned_item_quantity', 'returned_item_price' ]
+        
+        try:    
+            self.runner.bigquery.df_to_bq( df, 'Gen', 'TransactionData', True, list_exists = list_cols)
+            return f'upload successfull'    
+        except Exception as e: 
+            return f'error to send to BigQuery : {e}'
+
+    def push_appendix( self ) -> None:
+        df = self.runner.mysql.query_to_df( 'select DISTINCT id, category, price, name from gen_appendix;' ) 
+        
+        if df.empty or df is None:
+            return f'Appendix-Job: null pd.DataFrame()'
+
+        try:    
+            self.runner.bigquery.df_to_bq( df, 'Gen', 'Appendix', True)
+            return f'Appendix-Job: upload successfull'    
+        except Exception as e: 
+            return f'Appendix-Job: {e}'        
+
+    def push_procedure( self ) -> None:
+        query = 'call Gen.model()'
+        results = {}
+
+        try:
+            job = self.runner.bigquery.client.query(query)
+            job.result()
+            results[query] = f"success:{job.job_id}" 
+        except Exception as e:
+            print(e)
+            results[query] =  str(e) 
+
+        return results
 class NotUsed:
     def __init__(self, body_generator : classmethod ):
         if callable( body_generator):

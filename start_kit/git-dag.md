@@ -29,7 +29,7 @@ def git_actions_etl():
         return f"fetched df status: rows={len(df) if df is not None else 0}"
 
     @task
-    def mysql_to_bq(extract_status: str) -> str:
+    def postetl(extract_status: str) -> str:
         post_etl = PostETL()
         df = post_etl.post_etl()
         return f"{extract_status} -> Model in BigQuery Status : {len(df) if df is not None else 0}"

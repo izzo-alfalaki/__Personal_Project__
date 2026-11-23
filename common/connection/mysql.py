@@ -20,6 +20,16 @@ from config.mysqlconfig import main
         user_package = from cnfig.mysqlconfig import IZZO
         """
 
+def push_env( password, dbkey, user, hash_password, host, port ):
+    with open( '.env' , 'w') as f:
+        f.write( f"""
+DB_ROOT_PASSWORD = "{password}"
+    
+DB_NAME = "{dbkey}"
+    
+DB_URL = "mysql+pymysql://{user}:{hash_password}@{host}:{port}/airflow"
+""")
+
 class MysqlClient:
     def __init__(self):
         self.load = main 
@@ -28,7 +38,8 @@ class MysqlClient:
 
     def connection( self, 
                     user_package: str  = None, 
-                    database : str  = None  ) -> str:
+                    database : str  = None,
+                    host : str = None  ) -> str:
 
         if user_package not in [ p for p in self.load.keys() ]:
             raise KeyError( f'no such user : {user_package}' )
@@ -38,37 +49,51 @@ class MysqlClient:
         config = self.load.get( user_package )
 
         self.user = config.get("MYSQL_USER", "root")
-        host = config.get("MYSQL_HOST", "mysql")
-        port = config.get("MYSQL_PORT", "3306")        
+
+        # HOST -------------------------------------------
+        if host:
+            self.host = host
+        if host is None:
+            self.host = config.get("MYSQL_HOST", "mysql")
         
-        password = config.get("MYSQL_PASSWORD", None)
-        password = quote_plus(password)
-        if password is None:
+        # PORT -------------------------------------------
+        self.port = config.get("MYSQL_PORT", "3306")        
+
+        # PASSWORD -------------------------------------------
+        self.password = config.get("MYSQL_PASSWORD", None)
+        if self.password is None:
             return print( 'confoguration faild: no password passed' )
         
+        self.hash_password = quote_plus(self.password)
+
+        # DBKEY -------------------------------------------
         self.dbkey = config.get("MYSQL_DATABASE").get( database, 'not_found' )
         if database == 'not_found':
             raise KeyError( f'invalid database : {database}' )
 
-        with open( '.env' , 'w') as f:
-            f.write( f"""
-DB_ROOT_PASSWORD = "{config.get("MYSQL_PASSWORD", None)}"
+        return  f"mysql+pymysql://{self.user}:{self.hash_password}@{self.host}:{self.port}/{self.dbkey}"
 
-DB_NAME = "{self.dbkey}"
-
-DB_URL = "mysql+pymysql://{self.user}:{password}@{host}:{port}/airflow"
-            """)
-
-        return  f"mysql+pymysql://{self.user}:{password}@{host}:{port}/{self.dbkey}"
-
-    def engine( self, **kwargs ) -> Engine:
+    def engine( self, user_package, database ) -> Engine:
         mysql_engine = create_engine(
-                self.connection( **kwargs ),
+                self.connection( user_package, database ),
                 pool_size=5,  
                 max_overflow=10,   
                 pool_recycle=3600 
             )
-        
+
+        push_env( self.password, self.dbkey, self.user, self.hash_password, self.host, self.port )
+
         return mysql_engine
 
-MysqlClient().engine(  user_package = 'izzo', database = 'raw' )
+    def retry_engine( self, user_package, database ) -> Engine:
+        new_host = 'localhost'
+        mysql_engine = create_engine(
+                self.connection( user_package, database, host=new_host ),
+                pool_size=5,  
+                max_overflow=10,   
+                pool_recycle=3600 
+            )            
+            
+        #push_env( self.password, self.dbkey, self.user, self.hash_password, new_host, self.port )
+            
+        return mysql_engine

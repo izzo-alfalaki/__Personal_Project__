@@ -36,6 +36,7 @@ config/izzo_serial.json
 config/git.json
 config/lark.json
 config/mysql.json
+config/airflow.json
 config/lark_report_tables.json
 
 # ==========================================

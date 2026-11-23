@@ -15,7 +15,11 @@ import ast
 class LarkPipelines:
     def __init__(self):
         self.Lark = LarkSDK( client=LarkClient, app_token=BASE_TOKEN, report = EMPLOYEE )
-        self.mysql = MySQL( client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )) 
+        
+        client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )
+        retry_client = client= MysqlClient().retry_engine(  user_package = 'izzo', database = 'raw' )        
+        self.mysql = MySQL( client, retry_client ) 
+        
         self.BigQuery = BigQuery( GcpClient().bq_client(), GcpClient().get_credits(), GcpClient().project_id )
 
     def lark_get_table_list( self ):

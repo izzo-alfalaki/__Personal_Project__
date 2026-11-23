@@ -3,15 +3,21 @@ import pandas as pd
 from sqlalchemy import text
 
 class MySQL:
-    def __init__(self, client):
+    def __init__( self, client ):
         self.engine = client
-
+        
     def query_to_df(self, query: str, params: dict | None = None) -> pd.DataFrame:
-        with self.engine.connect() as connection:
-            return pd.read_sql(sql=text(query), con=connection, params=params)
+        eng = self.engine.connect()
+        
+        with eng as connection:
+            df =  pd.read_sql(sql=text(query), con=connection, params=params)
+        
+        return df
 
     def execute_statement(self, sql_statement: str, params: dict | None = None) -> int:
-        with self.engine.begin() as connection: 
+        eng = self.engine.begin()
+        
+        with eng as connection: 
             result = connection.execute(text(sql_statement), params or {})
             return result.rowcount
 
@@ -37,10 +43,12 @@ class MySQL:
         ### Auto Create - df['Uique_Timestamp'] = str(pd.Timestamp.now()) 
         ### **Purpose to create a unique records for batch update**
         """
+        eng = self.engine.begin()
+        
         df = self.clean_table(df)
         df[ 'unique_timestamp' ] = str(pd.Timestamp.now())
 
-        with self.engine.begin() as connection:
+        with eng as connection:
             df.to_sql(
                 name=table_name,
                 con=connection,
