@@ -1,11 +1,16 @@
 import os
 
 def clean_dags():
-    for f in os.listdir( 'dags'):
-        try:
-            os.remove( f'dags/{f}')
-        except Exception as e:
-            print( f'skipping dags/{f}')
+    if os.path.exists( 'dags' ):
+        for f in os.listdir( 'dags'):
+            try:
+                os.remove( f'dags/{f}')
+            except Exception as e:
+                print( e )
+                print( f'skipping dags/{f}')
+
+    else:
+        return
 
 def clean_init():
     parcol = [ f for f in os.listdir( '.' ) if '.' not in f and

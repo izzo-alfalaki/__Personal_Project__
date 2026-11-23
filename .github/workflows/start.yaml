@@ -21,39 +21,13 @@ jobs:
       - name: Install dependencies on runner
         run: pip install -r requirements.txt
 
-      - name: Write Connection-Kit / Token / Header for Requests
-        shell: python
-        env:
-          SECRET_MYSQL: ${{ secrets.MYSQL }}
-          ENV_DB_URL: ${{ secrets.ENV_DB_URL }}
-          ENV_AIRFLOW_USER: ${{ secrets.ENV_AIRFLOW_USER }}
-          ENV_AIRFLOW_PASSWORD: ${{ secrets.ENV_AIRFLOW_PASSWORD }}
-          ENV_USER_PATH: ${{ secrets.ENV_USER_PATH }}
-        run: |
-          import json
-          import os
-
-          db_root_password = ""
-          db_name = ""
-
-          val = os.environ.get("SECRET_MYSQL", "")
-          parsed = json.loads( val )
-
-          if parsed:
-            izzo_cfg = parsed.get("packages", {}).get("izzo", {})
-            db_root_password = izzo_cfg.get("MYSQL_PASSWORD", "")
-            db_name = izzo_cfg.get("MYSQL_DATABASE", {}).get("raw", "")
-                  
-          with open(".env", "w", encoding="utf-8") as f:
-              f.write(f"DB_ROOT_PASSWORD={db_root_password}\n")
-              f.write(f"DB_NAME={db_name}\n")
-              f.write(f"DB_URL={os.environ.get('ENV_DB_URL', '')}\n")
-              f.write(f"AIRFLOW_USER={os.environ.get('ENV_AIRFLOW_USER', '')}\n")
-              f.write(f"AIRFLOW_PASSWORD={os.environ.get('ENV_AIRFLOW_PASSWORD', '')}\n")
-              f.write(f"USER_PATH={os.environ.get('ENV_USER_PATH', '')}\n")
-
-      - name: Writes / Create Essentials Files
-        run: python -m start_kit.repo_start
+      # ONLY USE IF EXTERNAL VOLUME WAS REMOVE 
+      #- name: Writes / Create Essentials Files
+      #  run: python -m start_kit.repo_start
 
       - name: Run pipeline via Docker Compose
-        run: docker compose up -d --build
+        env:
+          USER_PATH: ${{ secrets.ENV_USER_PATH }}      
+        run: |
+          $path = $env:USER_PATH
+          docker compose --env-file "$path" up -d --build

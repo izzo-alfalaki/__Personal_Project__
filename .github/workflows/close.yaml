@@ -16,5 +16,6 @@ jobs:
       - name: Tear down Docker Compose stack
         run: docker compose down
 
-      - name: Delete Esssentials Files
-        run: python -m start_kit.repo_close
+      # ONLY USE IF EXTERNAL VOLUME WAS REMOVE
+      #- name: Delete Esssentials Files
+      #  run: python -m start_kit.repo_close
