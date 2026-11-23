@@ -1,5 +1,10 @@
 # ==========================================
-# Virtual Environments & Editors
+# Personal Files
+# ==========================================
+@MeTools/
+
+# ==========================================
+#  caches / syshe
 # ==========================================
 .venv/
 venv/
@@ -7,22 +12,20 @@ ENV/
 .vscode/
 .idea/
 .env
-
-# ==========================================
-# Personal Files
-# ==========================================
-@MeTools/
-
-# ==========================================
-# Python Bytecode & Cache
-# ==========================================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.git/
+*.log
+*.csv
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.DS_Store
 
 # ==========================================
-# Secrets & Private Configurations
+# Private Configurations
 # ==========================================
 **/SOURCES_*.json
 **/service_acc*.json

@@ -1,3 +1,6 @@
+###############################
+# caches / sys
+###############################
 .git/
 .venv/
 venv/
@@ -5,28 +8,25 @@ __pycache__/
 *.pyc
 *.log
 *.csv
-dump-gen/
-config/*.json
-.env
-@MeTools/
-dags/notes.txt
-README.md
-
-.env
-.env.*
-
-config/izzo.json
-config/izzo_serial.json
-config/git.json
-config/lark.json
-config/mysql.json
-config/lark_report_tables.json
-
-venv/
-.venv/
-__pycache__/
 *.py[cod]
 .pytest_cache/
 .mypy_cache/
-*.log
 .DS_Store
+
+###############################
+# documentation
+###############################
+*.md
+welcome.py
+
+###############################
+# vol injection
+###############################
+.env
+.env.*
+common/
+config/
+dags/
+main/
+pipelines/
+sql/
