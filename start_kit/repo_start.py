@@ -2,7 +2,10 @@ import os
 
 def writes_dags():
     startdir = 'start_kit'
-    os.makedirs( startdir, exist_ok=True)
+
+    dagsdir = 'dags'
+    os.makedirs( dagsdir, exist_ok=True)
+
     for f in [ c for c in os.listdir( startdir ) if c.endswith( '.md') and '-dag' in c]:
         with open( f'{startdir}/{f}', 'r') as read:
             x = read.read()
@@ -10,6 +13,7 @@ def writes_dags():
         x = str( x )
         x = x.replace( "```python", "" )
         x = x.replace( "```", "" )
+
         with open( f'dags/{f.replace( '.md', '.py')}', 'w') as write:
             write.write( x )
 

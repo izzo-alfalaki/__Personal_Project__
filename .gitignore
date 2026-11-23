@@ -4,7 +4,7 @@
 @MeTools/
 
 # ==========================================
-#  caches / syshe
+#  cache / sys
 # ==========================================
 .venv/
 venv/
@@ -23,6 +23,7 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .DS_Store
+__init__.py
 
 # ==========================================
 # Private Configurations
@@ -36,3 +37,8 @@ config/git.json
 config/lark.json
 config/mysql.json
 config/lark_report_tables.json
+
+# ==========================================
+# working-env codes
+# ==========================================
+dags/*.py
