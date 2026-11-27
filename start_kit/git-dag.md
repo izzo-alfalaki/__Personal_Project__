@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta
 from airflow.decorators import dag, task
 
-from pipelines.gitpipeline import ETL, PostETL
+from pipelines.gitpipeline import ETL, PostETL, Runner
 
 
 DEFAULT_ARGS = {
@@ -19,23 +19,36 @@ DEFAULT_ARGS = {
     schedule="30 6 * * *",
     catchup=False,
     max_active_runs=1,
-    tags=["etl", "bi_model"],
+    tags = [ 'ETL Git Actions', 'BI Model Workflow Runs'  ]
 )
-def git_actions_etl():
+def git_actions_pipeline():
     @task
     def etl() -> str:
-        etl = ETL()
+        runner = Runner()
+        etl = ETL( runner)
+        
         df = etl.etl()
         return f"fetched df status: rows={len(df) if df is not None else 0}"
 
     @task
     def postetl(extract_status: str) -> str:
-        post_etl = PostETL()
-        df = post_etl.post_etl()
-        return f"{extract_status} -> Model in BigQuery Status : {len(df) if df is not None else 0}"
+        runner = Runner() 
+        post_etl = PostETL( runner )
+        
+        df = post_etl.from_mysql()
+        status = post_etl.to_bigquery( df )
+        procedure_echo = post_etl.push_procedure()
 
+        return \
+        f"""
+        ETL status : {extract_status} 
+        -> MySQL <> BigQuery Status : {status}-{len(df) if df is not None else 0} 
+        -> Model (Procedure) Status : {procedure_echo}
+        """
+
+    etl_status = ""
     etl_status = etl()
-    #mysql_to_bq(etl_status)
+    postetl(etl_status)
 
-dag = git_actions_etl()
+dag = git_actions_pipeline()
 ```

@@ -239,7 +239,7 @@ class PostETL:
 #########################################################################################################################
 class CallProcedureSendToLark:
     def __init__(self):
-        self.runner = GitPipelines()
+        self.runner = ETL( Runner() )
 
     def push_procedure( self ) -> None:
         query = self.runner.BigQuery.get_procedure('git', ['git_procedure'])
@@ -287,8 +287,8 @@ class CallProcedureSendToLark_UsingSDK:
         self.BigQuery = BigQuery( gcp.bq_client(), gcp.get_credits(), gcp.project_id )
 
     def recall_workflow(self):
-        workflow = GitPipelines()
-        df = workflow.call_procedure()
+        self.runner = ETL( Runner() )
+        df = ...
         return df
 
     def send_report_to_lark(self, name = None):

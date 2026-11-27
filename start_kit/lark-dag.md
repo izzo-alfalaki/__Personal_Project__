@@ -1,8 +1,9 @@
 ```python
+
 from datetime import datetime, timedelta
 from airflow.decorators import dag, task
 
-from pipelines.larkpipeline import ETL, PostETL
+from pipelines.larkpipeline import ETL, PostETL, Runner
 
 
 DEFAULT_ARGS = {
@@ -18,25 +19,42 @@ DEFAULT_ARGS = {
     schedule="30 6 * * *",
     catchup=False,
     max_active_runs=1,
-    tags=["lark", "etl"],
+    tags = [ 'ETL All Lark Base Table', 'BI Model All']
 )
-def lark_pipelines():
+def lark_pipeline():
     @task
-    def extract_transform_load_lark() -> str:
-        etl = ETL()
-        tables = etl.etl( production=True)
-        return f"fetch_tables : { ' , '.join([c for c in tables.keys()] )   }"
+    def etl() -> str:
+        runner = Runner()
+
+        etl = ETL( runner )
+        
+        etl_info, fetched_df = etl.extract()
+        transform_info, transform_results = etl.transform( fetched_df )
+        load_info = etl.load( transform_results )
+        
+        return f"""etl_info : { ','.join(etl_info)}  --> 
+        transform_info : {transform_info} --> load_info : {load_info}"""
 
     @task
-    def load_lark_to_bq(extract_status: str) -> str:
-        etl = PostETL()
-        xcom_list = etl.mysql_to_bq()
-        return f"{extract_status} -> To-BigQuery status: { ' , '.join( xcom_list )}"
+    def postetl( etl_status: str = None) -> str:
+        runner = Runner()
 
-    #status = extract_transform_load_lark()
-    #load_lark_to_bq(status)
+        postetl = PostETL( runner )
+        mysql_info, mysql_pulled = postetl.from_mysql()
+        bq_info = postetl.to_bq( mysql_pulled )
+        
+        trigger_info = postetl.trigger_procedure()
 
-    extract_transform_load_lark()
 
-dag = lark_pipelines()
+        postetl_status = f"PostETL Status : From-mysql - {mysql_info } --> To BQ - {bq_info} --> Trigger Procedure - { trigger_info }" 
+        if etl_status:
+            return f"ETL-Status: {etl_status} --> PostETL-Status : {postetl_status}"
+
+        else:
+            return postetl_status
+
+    etl_status = etl()
+    postetl(etl_status)
+
+dag = lark_pipeline()
 ```

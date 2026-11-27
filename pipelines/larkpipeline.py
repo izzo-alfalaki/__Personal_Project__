@@ -12,13 +12,15 @@ from common.connection.mysql import MysqlClient
 import pandas as pd
 import ast
 
-class LarkPipelines:
-    def __init__(self):
+class Runner:
+    def __init__(self, local = False ):
         self.Lark = LarkSDK( client=LarkClient, app_token=BASE_TOKEN, report = EMPLOYEE )
         
-        client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )
-        retry_client = client= MysqlClient().retry_engine(  user_package = 'izzo', database = 'raw' )        
-        self.mysql = MySQL( client, retry_client ) 
+        if not local:
+            client= MysqlClient().engine(  user_package = 'izzo', database = 'raw' )
+        if local:
+            client = MysqlClient().retry_engine(  user_package = 'izzo', database = 'raw' )
+        self.mysql = MySQL( client ) 
         
         self.BigQuery = BigQuery( GcpClient().bq_client(), GcpClient().get_credits(), GcpClient().project_id )
 
@@ -35,8 +37,8 @@ class LarkPipelines:
         return df
 
 class ETL:
-    def __init__(self):
-        self.runner = LarkPipelines()
+    def __init__(self, runner):
+        self.runner = runner or Runner()
 
     def general_standard_clean( self, df : pd.DataFrame ) -> pd.DataFrame:
         minus = df.select_dtypes(include=["number", "object"]).columns.tolist()
@@ -68,33 +70,21 @@ class ETL:
 
         return df
 
-    def clean_employee_table( self, df : pd.DataFrame ) -> pd.DataFrame:
-        
-        num_cols_need_clean = [  
-                'age_value' , 'available leave this year_value' , 'contract left ( month )_value' , 'loyalty payout_value' , 'requestabe annual leave_value' , 'resign notice ( days )_value' , 'cummulative performance_value'
-            ]
+    def clean_schedule( self, df : pd.DataFrame ) -> pd.DataFrame:
+        to_list_cols = ['cashier', 'receptionist', 'store operator', 'general support', 'supervisor', 
+                        'supporting cashier', 'supporting receptionist', 'supporting store']
 
-        for c in num_cols_need_clean:
-            #df[c] = df[c].apply(lambda x: x[0] if not isinstance(x, [ float | int]) and len(x) > 0 else x)
-            df[c] = df[c].apply(lambda x: x if isinstance( x , float) or isinstance( x, int) or isinstance( x, str) else x[0])
-            df[c] = pd.to_numeric( df[c], errors = 'coerce')
-            df[c] = df[c].fillna(0)
+        df['all_on_duty'] =  [[] for _ in range(len(df))]
+        for col in to_list_cols:
+            df[ col ] = df[col].apply( 
+                lambda x : ast.literal_eval(x) if isinstance( x, str ) and x is not None else x )
 
-        df.columns = df.columns.str.split( '_' ).str[0]
-        return df
+            df['all_on_duty'] = df['all_on_duty'] + df[col].apply( lambda x: x if not isinstance( x, float) else []) 
 
-    def clean_salary_table( self, df : pd.DataFrame, production : bool = True ) -> pd.DataFrame:
-        for x in [ 'qualified position', 'base bonus_value', 'base pay_value']:  
-            df[x] = df[x].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
-            if not x == 'qualified position':
-                df[x] = df[x].apply(lambda x: x[0] if len(x) <= 1 else x)
 
-        if production:
-            if 'qualified position' in df.columns:
-                df = df.explode('qualified position')
-            else:
-                print('WARNING: qualified position column not found in dataframe')
-        
+        df['supervisor'] = df['supervisor'].apply( lambda x : x[0] if not isinstance( x, float ) else pd.NA )
+
+        df[ 'total_incharge' ] = df[ 'all_on_duty' ].apply( lambda x : len(x) if isinstance(x, list) else 0)
         return df
 
     def get_df_from_table_id(self, **kwargs):
@@ -119,30 +109,7 @@ class ETL:
 
         return df
 
-    def load_to_mysql(self, df : pd.DataFrame, name : str  ):
-        """
-        pulled from API, so raw data, for mysql
-        """
-        #self.runner.BigQuery.df_to_bq( report, 'Git', 'Actions', new=False )
-
-        if df is None or df.empty:
-            print( 'null df, empty df at stage Upload to MySQL' )
-            return None
-        
-        try:
-            self.runner.mysql.load_df_to_table( df , name , if_exists='append' )
-        except:
-            for c in df.columns:
-                df[c] = df[c].astype( str )
-
-            try:
-                new_name = f"{ name }_failed_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}"
-                self.runner.mysql.load_df_to_table( df , new_name , if_exists='replace' )
-            except Exception as e:
-                print( e )
-                pass
-
-    def etl( self, production : bool = True ):
+    def extract( self, production : bool = True ):
         df = self.runner.lark_get_table_list()
         if df.empty:
             raise ValueError('No tables found in LarkBase.')
@@ -150,43 +117,157 @@ class ETL:
         if not production:
             df.to_csv( 'list_of_tables.csv', index=False )
 
-        manual_key = [ 'Employee Table', 'Salary Table' ]
-        test_table_id = [ df['table_id'].tolist()[0], df['table_id'].tolist()[2]]
-    
-        zip_package = zip( df['name'].unique().tolist(), df['table_id'].unique().tolist() )
+        table_list_result = zip( df['name'].unique().tolist(), df['table_id'].unique().tolist() )
         
-        tables = {}
-        for key, id in zip_package if production else zip( manual_key, test_table_id ):
+        fetch_df_results = {}
+        for key, id in table_list_result:
             fetch_df = self.get_df_from_table_id( new_table_id = id )
+            fetch_df_results[ key ] = fetch_df
 
-            if fetch_df.empty:
+        return list(table_list_result), fetch_df_results
+
+    def transform( self, fetch_df_results : dict, production = True ):    
+        transform_tables = {}
+        transform_results = {}
+        
+        for key, df in fetch_df_results.items():
+            
+            df : pd.DataFrame
+            
+            if df.empty:
+                transform_tables[key] =  f"{key} : Null - pd.DataFrame()"
                 continue
 
             if not production:
-                fetch_df.to_csv( f"raw_{key.lower().replace(' ', '_')}_table.csv", index=False )
+                df.to_csv( f"raw_{str(key).lower().replace(' ', '_')}_table.csv", index=False )
 
-            if key == 'Employee Table':
-                fetch_df = self.clean_employee_table( fetch_df )
-            elif key == 'Salary Table':
-                fetch_df = self.clean_salary_table( fetch_df )
+            if key == 'Schedule':
+                df = self.clean_schedule( df )
             else:
                 print( f'{key}: not assigned post clean' )
-            
-            tables[key] = fetch_df
 
+            transform_tables[key] =  f"{key} : {len( df )}"
+            transform_results[ key ] = df
+
+        return transform_tables, transform_results
+
+    def load( self, transform_results : dict, production = True,  ):
+        """
+        pulled from API, so raw data, for mysql
+        """
+        load_results = {}
+        for key, df in transform_results.items():    
             if production:
-                clean_name = key.lower().replace(' ', '_')
-                self.load_to_mysql( fetch_df, clean_name)
-            else:
-                clean_name = key.lower().replace(' ', '_')
-                fetch_df.to_csv( f"mysql_{clean_name}_table.csv", index=False )
+                clean_name = str(key).lower().replace(' ', '_')
 
-        return tables
+                df : pd.DataFrame
+                
+                if df is None or df.empty:
+                    load_results[ clean_name ] =  f'null df, empty df at stage Upload to MySQL'
+                    continue
+        
+                try:
+                    self.runner.mysql.load_df_to_table( df , clean_name , if_exists='append' )
+                    load_results[ clean_name ] = f" {clean_name} : appended to mysql"
+                except:
+                    for c in df.columns:
+                        df[c] = df[c].astype( str )
+
+                    try:
+                        new_name = f"{ clean_name }_failed_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}"
+                        self.runner.mysql.load_df_to_table( df , new_name , if_exists='replace' )
+                        load_results[ clean_name ] = f"{clean_name} : failed to upload as - {new_name}"
+                    except Exception as e:
+                        print( e )
+                        load_results[ clean_name ] = f"{clean_name} : disturbed at retry-upload stage {e}"
+                        pass
+            else:
+                clean_name = str(key).lower().replace(' ', '_')
+                df.to_csv( f"mysql_{clean_name}_table.csv", index=False )
+                load_results[ clean_name ] = 'table was saved as csv instead, not cloud testing.'
+                
+        return load_results 
 
 class PostETL:
-    def __init__(self):
-        self.runner = LarkPipelines()
+    def __init__(self, runner):
+        self.runner = runner or Runner()
 
+    def from_mysql( self ):
+        query = [
+            """ 
+            with a as(
+            select record_id, category, column_position, id, item_name, price, rack_value, row_position, cast( left( unique_timestamp, 19 ) as datetime ) as unique_timestamp 
+            from racks
+            )
+            ,b as (
+            SELECT 
+                *, ROW_NUMBER() over ( PARTITION BY record_id ORDER BY unique_timestamp desc ) as rn  
+            FROM a  
+            )
+
+            select * from b where rn = 1;
+            """,
+            """
+            with a as(
+            SELECT 
+                *, ROW_NUMBER() over ( PARTITION BY record_id ORDER BY 
+                                        cast( left(unique_timestamp, 19) as DATETIME) 
+                                        desc ) as rn
+            FROM `schedule`
+            )
+
+            select * from a where rn = 1;
+            """
+        ]
+        
+        xcom = {}
+        results = {}
+        for key, q in zip( [ 'rack', 'schedule' ]  , query  ):
+            try:
+                df = self.runner.mysql.query_to_df( q )
+                xcom[ key ] = f'query success: { len( df ) }'
+                results[ key ] = df
+
+            except Exception as e:
+                xcom[ key ] = f'query results : {e}'
+                results[ key ] = pd.DataFrame()
+
+        return xcom, results
+
+    def to_bq( self, results : dict ):
+
+        xcom = {}
+        for key, df in results.items():
+            to_list_cols = ['cashier', 'receptionist', 'store_operator', 'general_support', 'supervisor', 
+                            'supporting_cashier', 'supporting_receptionist', 'supporting_store', 'all_on_duty']
+            try:
+                new_name = str(key).title()
+                self.runner.BigQuery.df_to_bq( df, 'Lark', new_name, new = True, list_exists= to_list_cols )
+                xcom[ key ] = f'loaded to bq as {new_name} : {len(df)}'
+            except Exception as e:
+                xcom[ key ] = f'fail to load {key} : {e}'
+
+        return xcom
+
+    def trigger_procedure( self ):
+        trigger_results = {}
+        query = 'call Lark.model();'
+        try:
+            job = self.runner.BigQuery.client.query( query )
+            job.result()
+            trigger_results[ query ] = f" success : { job.job_id } "
+        except Exception as e:
+            trigger_results[ query ] = str(e)
+        
+        return trigger_results
+
+#########################################################################################################################
+# -------------------------------------------- BREAK OF SIGNIFICANT METHOD -------------------------------------------- #
+#########################################################################################################################
+class LarkReportStage:
+    def __init__(self, runner ):
+        self.runner = runner or Runner()
+    
     def mysql_to_bq( self ):
         ql = [
             """

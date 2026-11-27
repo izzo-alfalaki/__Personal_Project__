@@ -195,7 +195,11 @@ class PostETL:
                 ) 
 
         if df.empty or df is None:
-            return pd.DataFrame()
+            try: 
+                df = df = self.runner.mysql.query_to_df( "select * from transaction_data;" )
+            except Exception as e:
+                print( e )
+                return pd.DataFrame()
 
         return df
 
@@ -208,7 +212,7 @@ class PostETL:
                       'returned_item', 'returned_item_quantity', 'returned_item_price' ]
         
         try:    
-            self.runner.bigquery.df_to_bq( df, 'Gen', 'TransactionData', True, list_exists = list_cols)
+            self.runner.bigquery.df_to_bq( df, 'GenData', 'TransactionData', True, list_exists = list_cols)
             return f'upload successfull'    
         except Exception as e: 
             return f'error to send to BigQuery : {e}'
@@ -220,13 +224,13 @@ class PostETL:
             return f'Appendix-Job: null pd.DataFrame()'
 
         try:    
-            self.runner.bigquery.df_to_bq( df, 'Gen', 'Appendix', True)
+            self.runner.bigquery.df_to_bq( df, 'GenData', 'Appendix', True)
             return f'Appendix-Job: upload successfull'    
         except Exception as e: 
             return f'Appendix-Job: {e}'        
 
     def push_procedure( self ) -> None:
-        query = 'call Gen.model()'
+        query = 'call GenData.model()'
         results = {}
 
         try:

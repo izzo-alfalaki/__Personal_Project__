@@ -85,7 +85,7 @@ class BigQuery:
             for c in list_exists:
                 try:
                     df[c] = df[c].apply( 
-                        lambda x : ast.literal_eval( x ) if x.startswith( '[') or x.startswith( '{') else x )
+                        lambda x : ast.literal_eval( x ) if not isinstance(x, float) and x is not None else x )
                 except Exception as e:
                     print( e )
                     pass
